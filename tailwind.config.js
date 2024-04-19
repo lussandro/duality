@@ -1,0 +1,70 @@
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: [
+    './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/components/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/app/**/*.{js,ts,jsx,tsx,mdx}',
+  ],
+  theme: {
+    extend: {
+      colors: {
+        primary: '#1A1A1A',
+        secundary: '#151515',
+        tertiary: '#292929',
+        text: {
+          primary: '#E6E6E6',
+          secundary: '#888888',
+        },
+        blue: {
+          100: '#DDE2FE',
+          200: '#BBC4FE',
+          300: '#99A5FD',
+          400: '#7F8DFB',
+          500: '#5566F9',
+          600: '#3E4CD6',
+          700: '#2A36B3',
+          800: '#1B2390',
+          900: '#101677',
+        },
+        green: {
+          100: '#E0FBD7',
+          200: '#BCF8B1',
+          300: '#8CEA86',
+          400: '#63D667',
+          500: '#36BC46',
+          600: '#27A141',
+          700: '#1B873C',
+          800: '#116D35',
+          900: '#0A5A31',
+        },
+        yellow: {
+          100: '#FFF4D7',
+          200: '#FFE6AF',
+          300: '#FFD587',
+          400: '#FFC469',
+          500: '#FFA838',
+          600: '#DB8528',
+          700: '#B7651C',
+          800: '#934911',
+          900: '#7A350A',
+        },
+        red: {
+          100: '#FFE7DA',
+          200: '#FFC9B6',
+          300: '#FFA492',
+          400: '#FF8277',
+          500: '#FF4A4B',
+          600: '#DB3645',
+          700: '#B7253F',
+          800: '#931738',
+          900: '#7A0E34',
+        },
+      },
+      screens: {
+        '2sm': '440px',
+        ms: '700px',
+      },
+    },
+  },
+  plugins: [require('tailwind-scrollbar')({ nocompatible: true })],
+};
