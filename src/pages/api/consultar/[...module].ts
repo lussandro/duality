@@ -332,7 +332,7 @@ function formatResults(module: string, data: any): string {
     case 'Ip':
       return formatIpResults(data as HostingData, resultString);
     case 'cpf':
-      return formatCpfResults(data as CpfResult, resultString);
+      return formatCpfResults(data as CpfResult);
     case 'placa':
       return formatPlacaResults(data as PlacaResult);
     case 'placa2':
