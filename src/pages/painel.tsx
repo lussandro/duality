@@ -5,7 +5,8 @@ import {
   BsFillPersonBadgeFill,
   BsCurrencyDollar,
   BsFillCarFrontFill,
-  BsFillBuildingFill
+  BsFillBuildingFill,
+  BsFillTelephoneXFill
 } from 'react-icons/bs';
 import { IoWomanSharp, IoLocationSharp } from 'react-icons/io5';
 import { FaServer } from 'react-icons/fa';
@@ -100,11 +101,17 @@ export default function Panel() {
             redirectUrl="/consultar/cnpj"
           />
           <Widget
+            icon={BsFillTelephoneXFill}
+            title="Telefone"
+            description="Busca telefones vinculados a um CPF"
+            redirectUrl="/consultar/telefone2"
+          />
+          {/* <Widget
             icon={BsCurrencyDollar}
             title="Comprar Créditos"
             description="Renovar o Seu plano"
             redirectUrl="/consultar/placa2"
-          />
+          /> */}
         </div>
       </main>
       <div className="fixed bottom-5 left-0 right-0 flex justify-center">

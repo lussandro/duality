@@ -81,6 +81,16 @@ const modules = [
     charactersToRemove: ['+', '(', ')', '-', ' '],
   }, 
   {
+    name: 'Telefone por CPF',
+    url: 'telefone2',
+    api: '/api/consultar',
+    placeholder: 'Digite o CPF',
+    submodules: [
+      { name: 'Serasa', api: '/telefone2' },
+    ],
+    charactersToRemove: ['+', '(', ')', '-', ' '],
+  }, 
+  {
     name: 'CEP',
     url: 'cep',
     api: '/api/consultar',

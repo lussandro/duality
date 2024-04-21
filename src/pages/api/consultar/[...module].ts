@@ -291,6 +291,7 @@ async function QueryAPI(req: NextApiRequest, res: NextApiResponse) {
       placa: (input) => `${API_BASE_URL_DUALITY}/consulta_placa?placa=${input}`,
       placa2: (input) => `${API_PLACAS}/consulta/${input}/${API_TOKEN}`,
       telefone: (input) => `${API_BASE_URL_DUALITY}/consulta_telefone?ddd_telefone=${input}`,
+      telefone2: (input) => `${API_BASE_URL_DUALITY}/consulta_telefone_cpf?cpf=${input}`,
       cep: (input) => `${API_CEP}/${input}/json/`,
       // mother: (input) => `${API_BASE_URL_OWNDATA}&modulo=mother&consulta=${encodeURIComponent(input)}`,
       mail: (input) => `${API_BASE_URL_OWNDATA}?email=${encodeURIComponent(input.toLowerCase())}`,
@@ -330,6 +331,8 @@ function formatResults(module: string, data: any): string {
     case 'nomeserasa':  
       return formatNameResults(data as NomeResult[], 50);
     case 'telefone':
+      return formatTelefoneResults(data.data as TelefoneResult);
+    case 'telefone2':
       return formatTelefoneResults(data.data as TelefoneResult);
     case 'mail':
       return formatMailResults(data as MailResult[]);
