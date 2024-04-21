@@ -49,7 +49,7 @@ export default function Panel() {
           <Widget
             icon={BsFillTelephoneFill}
             title="Telefone"
-            description="Dados atráves do número de telefone"
+            description="Dados do propietário de um telefone"
             redirectUrl="/consultar/telefone"
           />
           <Widget
@@ -61,7 +61,7 @@ export default function Panel() {
           <Widget
             icon={IoMdMail}
             title="Email"
-            description="Informações através do endereço de e-mail"
+            description="Quem é o dono de um endereço de e-mail"
             redirectUrl="/consultar/email"
           />
           <Widget
@@ -73,7 +73,7 @@ export default function Panel() {
           <Widget
             icon={IoWomanSharp}
             title="Mãe"
-            description="Informações do filho atráves do nome da Mãe"
+            description="Trás todos os filhos atráves do nome da Mãe"
             redirectUrl="/consultar/mae"
           />
           <Widget
