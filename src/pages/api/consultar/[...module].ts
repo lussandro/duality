@@ -206,31 +206,21 @@ interface NomeResult {
 
 interface TelefoneResult {
   data: {
-    Contatos: {
-      CPF: string;
-      NOME: string;
-      SEXO: string;
-      NASC: string;
-      NOME_MAE: string;
-      NOME_PAI: string;
-      RG: string;
-      DT_SIT_CAD: string;
-      CBO: string;
-      ORGAO_EMISSOR: string;
-      UF_EMISSAO: string;
-      DT_OB: string;
-      RENDA: string;
-      TITULO_ELEITOR: string;
       DDD: string;
       TELEFONE: string;
-      TIPO_TELEFONE: string;
-      DT_INCLUSAO: string;
-      SIGILO: string;
-      NSU: string;
-      CLASSIFICACAO: string
+      CPF_CNPJ: string;
+      NOME: string;
+      TIPO: string;
+      LOGRADOURO: string;
+      NUMERO: string;
+      BAIRRO: string;
+      CEP: string;
+      CIDADE: string;
+      UF: string;
+      
     }
   }
-}
+
 interface MailResult {
   cpf: string;
   nome: string;
@@ -300,7 +290,7 @@ async function QueryAPI(req: NextApiRequest, res: NextApiResponse) {
       nomeserasa: (input) => `${API_BASE_URL_DUALITY}/consulta_nome?nome=${encodeURIComponent(input)}`,
       placa: (input) => `${API_BASE_URL_DUALITY}/consulta_placa?placa=${input}`,
       placa2: (input) => `${API_PLACAS}/consulta/${input}/${API_TOKEN}`,
-      // telefone: (input) => `${API_BASE_URL_SERASA}&telefone=${input}`,
+      telefone: (input) => `${API_BASE_URL_DUALITY}/consulta_telefone?ddd_telefone=${input}`,
       cep: (input) => `${API_CEP}/${input}/json/`,
       // mother: (input) => `${API_BASE_URL_OWNDATA}&modulo=mother&consulta=${encodeURIComponent(input)}`,
       mail: (input) => `${API_BASE_URL_OWNDATA}?email=${encodeURIComponent(input.toLowerCase())}`,
@@ -340,7 +330,7 @@ function formatResults(module: string, data: any): string {
     case 'nomeserasa':  
       return formatNameResults(data as NomeResult[], 50);
     case 'telefone':
-      return formatTelefoneResults(data.data as TelefoneResult[], 20);
+      return formatTelefoneResults(data.data as TelefoneResult);
     case 'mail':
       return formatMailResults(data as MailResult[]);
     case 'cep':
@@ -516,32 +506,24 @@ function formatPlacaResults(data: { veiculo_data: string }): string {
   return resultString;
 }
 
-function formatTelefoneResults(data: TelefoneResult[], maxResults: number): string {
+function formatTelefoneResults(data: TelefoneResult): string {
   resultString = '';
+  const [ddd, telefone, cpf, nome, tipo, logradouro, numero, bairro, cep, cidade, uf] = data;
 
-  for (let i = 0; i < Math.min(data.length, maxResults); i++) {
-    const result = data[i];
     resultString += `
-    CPF: ${result.CPF || 'Não encontrado'}
-    RG: ${result.RG || 'Não encontrado'}
-    Nome: ${result.NOME || 'Não encontrado'}
-    Nascimento: ${result.NASC || 'Não encontrado'}
-    Sexo: ${result.SEXO === 'F - FEMININO' ? 'Feminino' : 'Masculino'}
-    Nome da Mãe: ${result.NOME_MAE || 'Não encontrado'}
-    Nome do Pai: ${result.NOME_PAI || 'Não encontrado'}
-    CBO: ${result.CBO  || 'Não encontrado'}
-    Lugar de Emissão: ${result.UF_EMISSAO || 'Não encontrado'}
-    Título Eleitor: ${result.TITULO_ELEITOR || 'Não encontrado'}
-    Renda: ${result.RENDA || 'Não encontrado'}
-    Data Situação Cadastral: ${result.DT_SIT_CAD || 'Não encontrado'}
-    TITULO ELEITOR: ${result.TITULO_ELEITOR || 'Não encontrado'}
-    DATA INCLUSÃO: ${result.DT_INCLUSAO || 'Não encontrado'}
+    DDD: ${ddd || 'Não encontrado'}
+    TELEFONE: ${telefone || 'Não encontrado'}
+    CPF_CNPJ: ${cpf || 'Não encontrado'}
+    NOME: ${nome || 'Não encontrado'}
+    TIPO: ${tipo === 'F - FEMININO' ? 'Feminino' : 'Masculino'}
+    LOGRADOURO: ${logradouro || 'Não encontrado'}
+    NUMERO: ${numero || 'Não encontrado'}
+    BAIRRO: ${bairro  || 'Não encontrado'}
+    CEP: ${cep || 'Não encontrado'}
+    CIDADE: ${cidade || 'Não encontrado'}
+    UF: ${uf || 'Não encontrado'}
+    
     `;
-  }
-
-  if (data.length > maxResults) {
-    resultString += `\nExibindo apenas ${maxResults} de ${data.length} resultados.`;
-  }
 
   return resultString;
 }
