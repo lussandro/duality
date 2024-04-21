@@ -81,7 +81,7 @@ interface CpfResult {
 
 
 interface PlacaResult {
-  veiculo_data: {
+
     Chassi: string;
     Placa: string;
     Ano: number;
@@ -91,7 +91,7 @@ interface PlacaResult {
     Origem: string;
     Carroceria: string;
     Motor: string;
-  };
+
 }
 interface PlacaResult2 {
   MARCA: string;
