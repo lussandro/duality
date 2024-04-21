@@ -488,7 +488,7 @@ Titulo de Eleitor: ${parsedResult.TITULO_ELEITOR || 'Não encontrado'}\n`;
   return resultString;
 }
 
-function formatPlacaResults(data: { veiculo_data: any[] }): string {
+function formatPlacaResults(data: { veiculo_data: string }): string {
   let resultString = '';
 
   // Verifique se a chave 'veiculo_data' existe nos dados recebidos
