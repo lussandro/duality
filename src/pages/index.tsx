@@ -125,7 +125,7 @@ export default function Login() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">
       <div className="rounded px-8 py-8 md:w-2/3 w-full max-w-lg mx-auto">
-        <h1 className="text-3xl font-bold text-center mb-6">Duality</h1>
+        <h1 className="text-3xl font-bold text-center mb-6">Findy</h1>
         <form onSubmit={handleSubmit}>
           <div className="mb-4 text-center">
             <label className="block text-lg font-semibold mb-2">Usuário</label>

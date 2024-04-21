@@ -4,7 +4,7 @@ export default function Document() {
   return (
     <Html lang="pt-BR">
       <meta name="apple-mobile-web-app-capable" content="yes" />
-      <meta property="og:title" content="Duality Buscas" />
+      <meta property="og:title" content="Findy Buscas" />
       <meta
         property="og:description"
         content="Obtenha respostas precisas e rápidas com o nosso painel de consultas."
@@ -24,7 +24,7 @@ export default function Document() {
       <link rel="manifest" href="/site.webmanifest" />
       <Head />
       <body>
-        <title>Duality Buscas</title>
+        <title>Findy Buscas</title>
         <Main />
         <NextScript />
       </body>

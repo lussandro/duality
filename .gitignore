@@ -1,6 +1,9 @@
+bd
 node_modules
 .pnp
 .pnp.js
+
+bd
 
 coverage
 
@@ -22,3 +25,6 @@ yarn-error.log*
 .env.production.local
 node_modules
 *.pack
+
+
+bd/*.*

@@ -15,8 +15,8 @@ const modules = [
     api: '/api/consultar',
     placeholder: 'Digite o CPF',
     submodules: [
-      { name: 'SERASA', api: '/cpf' },
-      { name: 'CADSUS', api: '/cpf' }
+      { name: 'SERASA', api: '/cpf' }
+      // { name: 'CADSUS', api: '/cpf' }
     ],
     charactersToRemove: ['.', '-', ' '],
   },
@@ -26,7 +26,17 @@ const modules = [
     api: '/api/consultar',
     placeholder: 'Digite o email',
     submodules: [
-      { name: 'OwnData', api: '/mail' },
+      { name: 'Serasa', api: '/mail' },
+    ],
+    charactersToRemove: [' '],
+  },
+  {
+    name: 'Placas 2.0',
+    url: 'placa2',
+    api: '/api/consultar',
+    placeholder: 'Digite a placa',
+    submodules: [
+      { name: 'DETRAN', api: '/placa2' },
     ],
     charactersToRemove: [' '],
   },
@@ -248,7 +258,7 @@ export default function Query() {
         }, 'image/png');
       }
     } else {
-      navigator.clipboard.writeText(`${response}\n\nhttps://www.centralduality.com | INFORMAÇÃO PRIVADA`);
+      navigator.clipboard.writeText(`${response}\n\nhttps://findy.pro | INFORMAÇÃO PRIVADA`);
     }
   };
 
@@ -260,7 +270,7 @@ export default function Query() {
       link.download = `${input}.png`;
       link.click();
     } else {
-      const blob = new Blob([`${response}\n\nhttps://www.centralduality.com | INFORMAÇÃO PRIVADA`], {
+      const blob = new Blob([`${response}\n\nhttps://findy.pro | INFORMAÇÃO PRIVADA`], {
         type: 'text/plain;charset=utf-8',
       });
       saveAs(blob, `${selectedModule?.name?.toUpperCase()} (${submodule}) - ${input}.txt`);

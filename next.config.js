@@ -16,7 +16,7 @@ module.exports = {
       },
       {
         source: '/telegram',
-        destination: 'https://t.me/painelduality',
+        destination: 'https://t.me/findy_buscas_bot',
         permanent: true,
       },
     ];

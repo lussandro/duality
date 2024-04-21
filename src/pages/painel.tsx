@@ -2,7 +2,10 @@ import {
   BsFillPersonVcardFill,
   BsFillPersonFill,
   BsFillTelephoneFill,
-  BsFillPersonBadgeFill
+  BsFillPersonBadgeFill,
+  BsCurrencyDollar,
+  BsFillCarFrontFill,
+  BsFillBuildingFill
 } from 'react-icons/bs';
 import { IoWomanSharp, IoLocationSharp } from 'react-icons/io5';
 import { FaServer } from 'react-icons/fa';
@@ -29,6 +32,7 @@ export default function Panel() {
       <Header adminButton={role === 'admin'} />
       <main className="flex min-h-screen flex-col items-center justify-between p-3 md:p-10">
         <div className="grid grid-cols-2 2sm:grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-5">
+         
           <Widget
             icon={BsFillPersonVcardFill}
             title="CPF"
@@ -50,7 +54,7 @@ export default function Panel() {
           <Widget
             icon={FaCar}
             title="PLACA"
-            description="Informações através do endereço da PLACA"
+            description="Informações através da PLACA"
             redirectUrl="/consultar/placa"
           />
           <Widget
@@ -82,6 +86,24 @@ export default function Panel() {
             title="IP"
             description="Informações a partir de qualquer endereço IP"
             redirectUrl="/consultar/ip"
+          />
+            <Widget
+            icon={BsFillCarFrontFill}
+            title="PLACA 2.0"
+            description="Informações completas através da PLACA"
+            redirectUrl="/consultar/placa2"
+          />
+          <Widget
+            icon={BsFillBuildingFill}
+            title="CNPJ"
+            description="informações completas de empresas"
+            redirectUrl="/consultar/cnpj"
+          />
+          <Widget
+            icon={BsCurrencyDollar}
+            title="Comprar Créditos"
+            description="Renovar o Seu plano"
+            redirectUrl="/consultar/placa2"
           />
         </div>
       </main>

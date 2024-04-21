@@ -80,7 +80,7 @@ async function GenerateAccessKeysAPI(req: NextApiRequest, res: NextApiResponse) 
     });
   }
 
-  if (!['1d', '7d', '30d'].includes(duration)) {
+  if (!['1d', '7d', '15d', '30d'].includes(duration)) {
     return res.status(400).json({
       message: 'Duração inválida.',
     });

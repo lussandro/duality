@@ -31,7 +31,7 @@ const actions = [
     name: 'Gerar Chave',
     url: 'gerar',
     api: '/api/auth/generate',
-    subvalues: [{ value: '1d' }, { value: '7d' }, { value: '30d' }],
+    subvalues: [{ value: '1d' }, { value: '7d' }, { value: '15d' }, { value: '30d' }],
   },
 ];
 

@@ -31,7 +31,7 @@ export default function Header({ adminButton, returnButton }: HeaderProps) {
           className="md:mt-1 mr-2 w-8 h-8 pointer-events-none"
           alt="Logo"
         />
-        <h1 className="text-lg md:text-2xl font-bold">Duality</h1>
+        <h1 className="text-lg md:text-2xl font-bold">FINDY</h1>
       </div>
       <div className="flex items-center space-x-4">
         {returnButton && (

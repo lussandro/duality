@@ -18,4 +18,4 @@ services:
         ports:
           - '5443:5432'
         volumes:
-          - ./bd:/var/lib/postgresql/data
+          - ~/bd:/var/lib/postgresql/data
