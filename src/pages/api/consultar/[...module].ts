@@ -445,7 +445,7 @@ Titulo de Eleitor: ${parsedResult.TITULO_ELEITOR || 'Não encontrado'}\n`;
   if (parsedResult.enderecos && parsedResult.enderecos.length > 0) {
     resultString += '\nEndereços:\n';
     parsedResult.enderecos.forEach((address, index) => {
-      resultString += `${index + 1}. ${address.ENDERECO}, ${address.NUMERO} - ${address.BAIRRO}, ${address.CIDADE}/${address.UF_EMISSAO} CEP: ${address.CEP}\n`;
+      resultString += `${index + 1}. ${address.LOGRADOURO}, ${address.ENDERECO}, ${address.NUMERO} - ${address.BAIRRO} - ${address.CIDADE}/${address.UF}\n`;
     });
   } else {
     resultString += '\nEndereços: Não encontrado\n';
