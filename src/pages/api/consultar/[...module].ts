@@ -239,9 +239,7 @@ interface CepResult {
 interface MotherResult {
   cpf_cnpj: string;
   nome: string;
-  dataNascimento: string;
-  sexo: string;
-  nomeMae: string;
+
 }
 
 async function QueryAPI(req: NextApiRequest, res: NextApiResponse) {
@@ -293,7 +291,7 @@ async function QueryAPI(req: NextApiRequest, res: NextApiResponse) {
       telefone: (input) => `${API_BASE_URL_DUALITY}/consulta_telefone?ddd_telefone=${input}`,
       telefone2: (input) => `${API_BASE_URL_DUALITY}/consulta_telefone_cpf?cpf=${input}`,
       cep: (input) => `${API_CEP}/${input}/json/`,
-      // mother: (input) => `${API_BASE_URL_OWNDATA}&modulo=mother&consulta=${encodeURIComponent(input)}`,
+      mother: (input) => `${API_BASE_URL_DUALITY}/mae?nomemae=${encodeURIComponent(input)}`,
       mail: (input) => `${API_BASE_URL_OWNDATA}?email=${encodeURIComponent(input.toLowerCase())}`,
       // title: (input) => `${API_BASE_URL_OWNDATA}&modulo=title&consulta=${input}`,
       
@@ -339,7 +337,7 @@ function formatResults(module: string, data: any): string {
     case 'cep':
       return formatCepResults(data as CepResult);
     case 'mother':
-      return formatMotherResults(data.msg as MotherResult[], 4);
+      return formatMotherResults(data as MotherResult[]);
     default:
       return '';
   }
@@ -617,25 +615,19 @@ function formatCepResults(data: CepResult, ): string {
   return resultString;
 }
 
-function formatMotherResults(data: CepResult[], maxResults: number): string {
-  resultString = '';
+function formatMotherResults(data: MotherResult[]): string {
+  let resultString = '';
 
-  if (data.length > maxResults) {
-    resultString += `\nExibindo apenas ${maxResults} de ${data.length} resultados.`;
-  }
-
-  for (let i = 0; i < Math.min(data.length, maxResults); i++) {
-    const result = data[i];
+  // Iterando sobre cada elemento da matriz data
+  data.forEach(([nome, cpf]) => {
+    // Adicionando os dados formatados ao resultString para cada elemento
     resultString += `
-CPF/CNPJ: ${result.cpf_cnpj || 'Não encontrado'}
-Nome: ${result.nome || 'Não encontrado'}
-Nascimento: ${result.dataNascimento || 'Não encontrado'}
-Sexo: ${result.sexo === "M" ? "MASCULINO" : "FEMININO" || 'Não encontrado'}
-Nome da Mãe: ${result.nomeMae || 'Não encontrado'}
-`;
-  }
+     CPF: ${cpf || 'Não encontrado,'}
+     NOME: ${nome || 'Não encontrado'}
+    `;
+  });
+
   return resultString;
 }
-
 resultString;
 resultString = '';
