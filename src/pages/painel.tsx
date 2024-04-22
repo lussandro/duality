@@ -49,7 +49,7 @@ export default function Panel() {
           <Widget
             icon={BsFillTelephoneFill}
             title="Telefone"
-            description="Dados do propietário de um telefone"
+            description="Dados vinculados um telefone"
             redirectUrl="/consultar/telefone"
           />
           <Widget
@@ -61,7 +61,7 @@ export default function Panel() {
           <Widget
             icon={IoMdMail}
             title="Email"
-            description="Quem é o dono de um endereço de e-mail"
+            description="Dados vinculados a um endereço de e-mail"
             redirectUrl="/consultar/email"
           />
           <Widget
@@ -97,7 +97,7 @@ export default function Panel() {
           <Widget
             icon={BsFillBuildingFill}
             title="CNPJ"
-            description="informações completas de empresas"
+            description="Busca Empresas no CPF ou Sócios por CNPJ"
             redirectUrl="/consultar/cnpj"
           />
           <Widget

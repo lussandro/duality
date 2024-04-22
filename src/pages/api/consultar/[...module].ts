@@ -81,7 +81,7 @@ interface CpfResult {
 
 
 interface PlacaResult {
-
+  veiculo_data: {
     Chassi: string;
     Placa: string;
     Ano: number;
@@ -91,7 +91,7 @@ interface PlacaResult {
     Origem: string;
     Carroceria: string;
     Motor: string;
-
+  }
 }
 interface PlacaResult2 {
   MARCA: string;
@@ -242,6 +242,13 @@ interface MotherResult {
 
 }
 
+interface TitleResult {
+  nome: string;
+  cpf: string;
+  zona: string;
+  secao: string;
+}
+
 async function QueryAPI(req: NextApiRequest, res: NextApiResponse) {
   let decoded: JwtPayload | null = null;
   let cacheKey: string | undefined;
@@ -293,7 +300,7 @@ async function QueryAPI(req: NextApiRequest, res: NextApiResponse) {
       cep: (input) => `${API_CEP}/${input}/json/`,
       mother: (input) => `${API_BASE_URL_DUALITY}/mae?nomemae=${encodeURIComponent(input)}`,
       mail: (input) => `${API_BASE_URL_OWNDATA}?email=${encodeURIComponent(input.toLowerCase())}`,
-      // title: (input) => `${API_BASE_URL_OWNDATA}&modulo=title&consulta=${input}`,
+      title: (input) => `${API_BASE_URL_DUALITY}/eleitor?titulo=${input}`,
       
     };
 
@@ -336,6 +343,8 @@ function formatResults(module: string, data: any): string {
       return formatMailResults(data as MailResult[]);
     case 'cep':
       return formatCepResults(data as CepResult);
+    case 'title':
+      return formatTitleResults(data as TitleResult, resultString);      
     case 'mother':
       return formatMotherResults(data as MotherResult[]);
     default:
@@ -479,7 +488,7 @@ Titulo de Eleitor: ${parsedResult.TITULO_ELEITOR || 'Não encontrado'}\n`;
   return resultString;
 }
 
-function formatPlacaResults(data: { veiculo_data: string }): string {
+function formatPlacaResults(data: { veiculo_data: string }) {
   let resultString = '';
 
   // Verifique se a chave 'veiculo_data' existe nos dados recebidos
@@ -525,6 +534,28 @@ function formatTelefoneResults(data: TelefoneResult): string {
     UF: ${uf || 'Não encontrado'}
     
     `;
+
+  return resultString;
+}
+
+function formatTitleResults(data: TitleResult[]): string {
+  let resultString = ''; // Inicialização da variável resultString aqui
+  
+  // Iterar sobre cada elemento do array de dados
+  data.forEach((item, index) => {
+    resultString += `
+      NOME: ${item.nome || 'Não encontrado'}
+      CPF: ${item.cpf || 'Não encontrado'}
+      ZONA: ${item.zona || 'Não encontrado'}
+      SECAO: ${item.secao || 'Não encontrado'}
+      
+      `;
+
+    // Adicionar uma linha em branco entre os resultados, exceto para o último item
+    if (index < data.length - 1) {
+      resultString += '\n';
+    }
+  });
 
   return resultString;
 }
@@ -617,7 +648,7 @@ function formatCepResults(data: CepResult, ): string {
 
 function formatMotherResults(data: MotherResult[]): string {
   let resultString = '';
-
+  const [nome, cpf ] = data;
   // Iterando sobre cada elemento da matriz data
   data.forEach(([nome, cpf]) => {
     // Adicionando os dados formatados ao resultString para cada elemento
@@ -625,7 +656,7 @@ function formatMotherResults(data: MotherResult[]): string {
      CPF: ${cpf || 'Não encontrado,'}
      NOME: ${nome || 'Não encontrado'}
     `;
-  });
+ });
 
   return resultString;
 }

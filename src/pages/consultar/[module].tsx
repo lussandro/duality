@@ -115,8 +115,8 @@ const modules = [
     api: '/api/consultar',
     placeholder: 'Digite o Numero do documento:',
     submodules: [
-      { name: 'Titulo de Eleitor', api: '/title' },
-      { name: 'CPF', api: '/cpf2' }
+      { name: 'Titulo de Eleitor', api: '/title' }
+      
     ],
     charactersToRemove: ['+', '(', ')', '-', ' '],
   }
