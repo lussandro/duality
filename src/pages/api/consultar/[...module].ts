@@ -472,7 +472,7 @@ Titulo de Eleitor: ${parsedResult.TITULO_ELEITOR || 'Não encontrado'}\n`;
   if (parsedResult.irmaos && parsedResult.irmaos.length > 0) {
     resultString += '\nParentes:\n';
     parsedResult.irmaos.forEach((irmao, index) => {
-      resultString += `${index + 1}. CPF: ${irmao.cpf}, Nome: ${irmao.nome}, Data de Nascimento: ${irmao.nasc}\n`;
+      resultString += `${index + 1}. CPF: ${irmao.cpf}, Nome: ${irmao.nome}, Data de Nascimento: ${irmao.vinculo}\n`;
     });
   } else {
     resultString += '\nParentes: Não encontrado\n';
