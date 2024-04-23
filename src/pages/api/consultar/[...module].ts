@@ -381,7 +381,7 @@ function formatResults(module: string, data: any): string {
     case 'placa2':
         return formatPlacaResults2(data as PlacaResult2);
     case 'nomeserasa':  
-      return formatNameResults(data as NomeResult[], 50);
+      return formatNameResults(data as NomeResult[], 1500);
     case 'telefone':
       return formatTelefoneResults(data.data as TelefoneResult);
     case 'telefone2':
@@ -389,7 +389,7 @@ function formatResults(module: string, data: any): string {
     case 'mail':
       return formatMailResults(data as MailResult[]);
     case 'cep':
-      return formatCepResults(data as CepResult[], 150);
+      return formatCepResults(data as CepResult[], 500);
     case 'title':
       return formatTitleResults(data as TitleResult);      
     case 'mother':
