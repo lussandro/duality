@@ -269,13 +269,16 @@ interface MailResult {
 }
 
 interface CepResult {
-  CEP: string;
-  LOGRADOURO: string;
-  COMPLEMENTO: string;
-  BAIRRO: string;
-  LOCALIDADE: string;
-  UF: string;
   DDD: string;
+  FONE: string;
+  CPF: string;
+  NOME: string;
+  TIPO: string;
+  LOGRADOURO: string;
+  NUMERO: string;
+  BAIRRO: string;
+  UF: string;
+  OUTROS: string;
 }
 
 interface MotherResult {
@@ -339,7 +342,7 @@ async function QueryAPI(req: NextApiRequest, res: NextApiResponse) {
       placa2: (input) => `${API_PLACAS}/consulta/${input}/${API_TOKEN}`,
       telefone: (input) => `${API_BASE_URL_DUALITY}/consulta_telefone?ddd_telefone=${input}`,
       telefone2: (input) => `${API_BASE_URL_DUALITY}/consulta_telefone_cpf?cpf=${input}`,
-      cep: (input) => `${API_CEP}/${input}/json/`,
+      cep: (input) => `${API_BASE_URL_SERASA}/buscar_cep?cep=${input}`,
       mother: (input) => `${API_BASE_URL_DUALITY}/mae?nomemae=${encodeURIComponent(input)}`,
       mail: (input) => `${API_BASE_URL_OWNDATA}?email=${encodeURIComponent(input.toLowerCase())}`,
       title: (input) => `${API_BASE_URL_DUALITY}/eleitor?titulo=${input}`,
@@ -386,7 +389,7 @@ function formatResults(module: string, data: any): string {
     case 'mail':
       return formatMailResults(data as MailResult[]);
     case 'cep':
-      return formatCepResults(data as CepResult);
+      return formatCepResults(data as CepResult[], 50);
     case 'title':
       return formatTitleResults(data as TitleResult);      
     case 'mother':
@@ -607,7 +610,7 @@ function formatEmpresaCpfResults(data: EmpresaCpfResult | EmpresaCpfResult[]): s
         `;
       });
     } else {
-      resultString += '\nNão há sócios registrados.\n';
+      resultString += '\nSócios não encontrados.\n';
     }
 
     // Adiciona uma quebra de linha entre cada empresa
@@ -760,19 +763,34 @@ Nome: ${data.nome || 'Não encontrado'}
   return resultString;
 }
 
-function formatCepResults(data: CepResult, ): string {
-  resultString = '';
+function formatCepResults(data: CepResult[], maxResults: number): string {
+  let resultString = '';
 
-  resultString += `
-  CEP : ${data.cep || 'Não encontrado'}
-  LOGRADOURO: ${data.logradouro || 'Não encontrado'}
-  COMPLEMENTO: ${data.complemento || 'Não encontrado'}
-  BAIRRO: ${data.bairro || 'Não encontrado'}
-  LOCALIDADE: ${data.localidade || 'Não encontrado'}
-  UF: ${data.uf || 'Não encontrado'}
-  DDD: ${data.ddd || 'Não encontrado'}
+  // Verificando se data é uma matriz
+  if (Array.isArray(data)) {
+    for (let i = 0; i < Math.min(data.length, maxResults); i++) {
+      const result = data[i];
+      resultString += `
+DDD: ${result[0] || 'Não encontrado'}
+FONE: ${result[1] || 'Não encontrado'}
+CPF: ${result[2] || 'Não encontrado'}
+NOME: ${result[3] || 'Não encontrado'}
+TIPO: ${result[4] || 'Não encontrado'}
+LOGRADOURO: ${result[5] || 'Não encontrado'}
+NUMERO: ${result[6] || 'Não encontrado'}
+BAIRRO: ${result[7] || 'Não encontrado'}
+CIDADE: ${result[9] || 'Não encontrado'}
+UF: ${result[10] || 'Não encontrado'}
+
 `;
-  
+    }
+
+    if (data.length > maxResults) {
+      resultString += `\nExibindo apenas ${maxResults} de ${data.length} resultados.`;
+    }
+  } else {
+    resultString = 'Dados não disponíveis';
+  }
 
   return resultString;
 }
