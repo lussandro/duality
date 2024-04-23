@@ -389,7 +389,7 @@ function formatResults(module: string, data: any): string {
     case 'mail':
       return formatMailResults(data as MailResult[]);
     case 'cep':
-      return formatCepResults(data as CepResult[], 50);
+      return formatCepResults(data as CepResult[], 150);
     case 'title':
       return formatTitleResults(data as TitleResult);      
     case 'mother':
