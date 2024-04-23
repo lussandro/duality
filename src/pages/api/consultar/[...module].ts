@@ -40,10 +40,28 @@ interface EmpresaResult {
 }
 
 interface EmpresaCpfResult {
-  CPF: string;
-  Nome: string;
-  Participacao: string;
-}
+  CNPJ: string;
+  Data_Fundacao: string;
+  Endereco: {
+    Bairro: string;
+    CEP: string;
+    Cidade: string;
+    Complemento: string;
+    Nome: string;
+    NUmero: string;
+    Tipo: string;
+    Titulo: string;
+    UF: string;
+    Razao_Social: string;
+    }
+    Socios: {
+      CPF: string;
+      Nome: string;
+      Participacao: string;
+    }
+  }
+  
+
 
 
 interface HostingData {
@@ -553,30 +571,53 @@ function formatEmpresaResults(data: EmpresaResult[]): string {
   return resultString;
 }
 
-function formatEmpresaCpfResults(data: EmpresaCpfResult[]): string {
+function formatEmpresaCpfResults(data: EmpresaCpfResult | EmpresaCpfResult[]): string {
   let resultString = ''; // Inicialização da variável resultString aqui
   console.log('Estou dentro da função');
 
-  const maxResults = 10; // Defina o número máximo de resultados a serem processados
-    
-  // Usar um loop for para iterar sobre os dados
-  for (let i = 0; i < Math.min(data.length, maxResults); i++) {
-    const empresa = data[i];
-    
+  // Verifica se os dados são um array ou um único objeto
+  const dataArray = Array.isArray(data) ? data : [data];
+
+  // Itera sobre cada objeto de empresa
+  dataArray.forEach(empresa => {
     resultString += `
-      CPF: ${empresa.CPF || 'Não encontrado'}
-      NOME: ${empresa.Nome || 'Não encontrado'}
-      Participação Societaria: ${empresa.Participacao || 'Não encontrado'}
+      CNPJ: ${empresa.CNPJ || 'Não encontrado'}
+      Razão Social: ${empresa.Razao_Social || 'Não encontrado'}
+      Data de Fundação: ${empresa.Data_Fundacao || 'Não encontrado'}\n
+      Endereço:\n
+        Bairro: ${empresa.Endereco.Bairro || 'Não encontrado'}
+        CEP: ${empresa.Endereco.CEP || 'Não encontrado'}
+        Cidade: ${empresa.Endereco.Cidade || 'Não encontrado'}
+        Complemento: ${empresa.Endereco.Complemento || 'Não encontrado'}
+        Nome: ${empresa.Endereco.Nome || 'Não encontrado'}
+        Número: ${empresa.Endereco.Numero || 'Não encontrado'}
+        Tipo: ${empresa.Endereco.Tipo || 'Não encontrado'}
+        Título: ${empresa.Endereco.Titulo || 'Não encontrado'}
+        UF: ${empresa.Endereco.UF || 'Não encontrado'}
     `;
-    
-    // Adicionar uma quebra de linha entre cada empresa, exceto a última
-    if (i !== Math.min(data.length, maxResults) - 1) {
-      resultString += '\n\n';
+
+    // Verifica se há sócios e adiciona ao resultado
+    if (empresa.Socios && empresa.Socios.length > 0) {
+      resultString += '\nSócios:\n';
+      empresa.Socios.forEach(socio => {
+        resultString += `
+            Nome: ${socio.Nome || 'Não encontrado'}
+            CPF: ${socio.CPF || 'Não encontrado'}
+            Participação: ${socio.Participacao || 'Não encontrado'}
+        `;
+      });
+    } else {
+      resultString += '\nNão há sócios registrados.\n';
     }
-  }
+
+    // Adiciona uma quebra de linha entre cada empresa
+    resultString += '\n\n';
+  });
 
   return resultString;
 }
+
+
 
 function formatPlacaResults(data: { veiculo_data: string }) {
   let resultString = '';
