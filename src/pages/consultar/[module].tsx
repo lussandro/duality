@@ -66,8 +66,8 @@ const modules = [
     api: '/api/consultar',
     placeholder: 'Digite o nome',
     submodules: [
-      { name: 'SERASA', api: '/nomeserasa' },
-      { name: 'DataPrime', api: '/nameprime'}
+      { name: 'SERASA', api: '/nomeserasa' }
+      
     ],
   },
   {
@@ -116,6 +116,18 @@ const modules = [
     placeholder: 'Digite o Numero do documento:',
     submodules: [
       { name: 'Titulo de Eleitor', api: '/title' }
+      
+    ],
+    charactersToRemove: ['+', '(', ')', '-', ' '],
+  },
+  {
+    name: 'Empresa',
+    url: 'empresa',
+    api: '/api/consultar',
+    placeholder: 'Digite o Numero do documento:',
+    submodules: [
+      { name: 'CNPJ', api: '/cnpj' },
+      { name: 'CPF', api: '/cpfsocio' }
       
     ],
     charactersToRemove: ['+', '(', ')', '-', ' '],

@@ -21,6 +21,30 @@ const cache = new NodeCache();
 const RATE_LIMIT_DURATION = 60;
 const REQUEST_LIMIT = 6;
 
+interface EmpresaResult {
+  CNPJ: string;
+  Endereco: {
+    Bairro: string;
+    CEP: string;
+    Cidade: string;
+    Complemento: string;
+    Nome: string;
+    Numero: string;
+    Tipo: string;
+    Titulo: string;
+    UF: string;
+  };
+  
+  Participacao_Socio: string;
+  Razao_Social: string;
+}
+
+interface EmpresaCpfResult {
+  CPF: string;
+  Nome: string;
+  Participacao: string;
+}
+
 
 interface HostingData {
   query: string;
@@ -301,7 +325,8 @@ async function QueryAPI(req: NextApiRequest, res: NextApiResponse) {
       mother: (input) => `${API_BASE_URL_DUALITY}/mae?nomemae=${encodeURIComponent(input)}`,
       mail: (input) => `${API_BASE_URL_OWNDATA}?email=${encodeURIComponent(input.toLowerCase())}`,
       title: (input) => `${API_BASE_URL_DUALITY}/eleitor?titulo=${input}`,
-      
+      cpfsocio: (input) => `${API_BASE_URL_DUALITY}/empresas?cpf_cnpj=${input}`,
+      cnpj: (input) => `${API_BASE_URL_DUALITY}/empresas?cpf_cnpj=${input}`,
     };
 
 
@@ -315,6 +340,7 @@ async function QueryAPI(req: NextApiRequest, res: NextApiResponse) {
     console.log('Dados recebidos da API:', data);
     if (response.status === 200) {
       const resultString = formatResults(module, data);
+      console.log('Dados recebidos da API Formatada:', resultString);
       return res.status(200).json({ response: resultString });
     }
   } catch (error: any) {
@@ -344,9 +370,13 @@ function formatResults(module: string, data: any): string {
     case 'cep':
       return formatCepResults(data as CepResult);
     case 'title':
-      return formatTitleResults(data as TitleResult, resultString);      
+      return formatTitleResults(data as TitleResult);      
     case 'mother':
       return formatMotherResults(data as MotherResult[]);
+    case 'cpfsocio':
+      return formatEmpresaResults(data as EmpresaResult[]);
+      case 'cnpj':
+        return formatEmpresaCpfResults(data as EmpresaCpfResult[]);
     default:
       return '';
   }
@@ -483,6 +513,66 @@ Titulo de Eleitor: ${parsedResult.TITULO_ELEITOR || 'Não encontrado'}\n`;
     });
   } else {
     resultString += '\nParentes: Não encontrado\n';
+  }
+
+  return resultString;
+}
+
+function formatEmpresaResults(data: EmpresaResult[]): string {
+  let resultString = ''; // Inicialização da variável resultString aqui
+  console.log('Estou dentro da função');
+
+  const maxResults = 10; // Defina o número máximo de resultados a serem processados
+    
+  // Usar um loop for para iterar sobre os dados
+  for (let i = 0; i < Math.min(data.length, maxResults); i++) {
+    const empresa = data[i];
+    
+    resultString += `
+      Razão Social: ${empresa.Razao_Social || 'Não encontrado'}
+      CNPJ: ${empresa.CNPJ || 'Não encontrado'}
+      Participação Societaria: ${empresa.Participacao_Socio || 'Não encontrado'}
+      Endereço:
+        Tipo: ${empresa.Endereco?.Tipo || 'Não encontrado'}
+        Nome: ${empresa.Endereco?.Nome || 'Não encontrado'}
+        Número: ${empresa.Endereco?.Numero || 'Não encontrado'}
+        Complemento: ${empresa.Endereco?.Complemento || 'Não encontrado'}
+        Bairro: ${empresa.Endereco?.Bairro || 'Não encontrado'}
+        Cidade: ${empresa.Endereco?.Cidade || 'Não encontrado'}
+        CEP: ${empresa.Endereco?.CEP || 'Não encontrado'}
+        UF: ${empresa.Endereco?.UF || 'Não encontrado'}
+        Título: ${empresa.Endereco?.Titulo || 'Não encontrado'}
+    `;
+    
+    // Adicionar uma quebra de linha entre cada empresa, exceto a última
+    if (i !== Math.min(data.length, maxResults) - 1) {
+      resultString += '\n\n';
+    }
+  }
+
+  return resultString;
+}
+
+function formatEmpresaCpfResults(data: EmpresaCpfResult[]): string {
+  let resultString = ''; // Inicialização da variável resultString aqui
+  console.log('Estou dentro da função');
+
+  const maxResults = 10; // Defina o número máximo de resultados a serem processados
+    
+  // Usar um loop for para iterar sobre os dados
+  for (let i = 0; i < Math.min(data.length, maxResults); i++) {
+    const empresa = data[i];
+    
+    resultString += `
+      CPF: ${empresa.CPF || 'Não encontrado'}
+      NOME: ${empresa.Nome || 'Não encontrado'}
+      Participação Societaria: ${empresa.Participacao || 'Não encontrado'}
+    `;
+    
+    // Adicionar uma quebra de linha entre cada empresa, exceto a última
+    if (i !== Math.min(data.length, maxResults) - 1) {
+      resultString += '\n\n';
+    }
   }
 
   return resultString;

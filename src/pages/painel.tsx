@@ -98,7 +98,7 @@ export default function Panel() {
             icon={BsFillBuildingFill}
             title="CNPJ"
             description="Busca Empresas no CPF ou Sócios por CNPJ"
-            redirectUrl="/consultar/cnpj"
+            redirectUrl="/consultar/empresa"
           />
           <Widget
             icon={BsFillTelephoneXFill}
