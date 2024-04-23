@@ -100,18 +100,6 @@ export default function Panel() {
             description="Busca Empresas no CPF ou Sócios por CNPJ"
             redirectUrl="/consultar/empresa"
           />
-          {/* <Widget
-            icon={BsFillTelephoneXFill}
-            title="Telefone"
-            description="Busca telefones vinculados a um CPF"
-            redirectUrl="/consultar/telefone2"
-          /> */}
-          {/* <Widget
-            icon={BsCurrencyDollar}
-            title="Comprar Créditos"
-            description="Renovar o Seu plano"
-            redirectUrl="/consultar/placa2"
-          /> */}
         </div>
       </main>
       <div className="fixed bottom-5 left-0 right-0 flex justify-center">

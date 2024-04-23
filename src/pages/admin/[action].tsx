@@ -192,7 +192,7 @@ export default function AdminActions() {
   }
 
   const handleCopyResult = () => {
-    const accessKeyPrefix = action === 'gerar' ? 'https://www.centralduality.com/ativar?chave=' : '';
+    const accessKeyPrefix = action === 'gerar' ? 'https://findy.pro/ativar?chave=' : '';
     const modifiedResponse = response
       .split('\n')
       .map((line) => accessKeyPrefix + line)
