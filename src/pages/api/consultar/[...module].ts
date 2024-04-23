@@ -383,7 +383,7 @@ function formatResults(module: string, data: any): string {
     case 'nomeserasa':  
       return formatNameResults(data as NomeResult[], 1500);
     case 'telefone':
-      return formatTelefoneResults(data.data as TelefoneResult);
+      return formatTelefoneResults(data as TelefoneResult);
     case 'telefone2':
       return formatTelefoneResults(data.data as TelefoneResult);
     case 'mail':
@@ -651,26 +651,32 @@ function formatPlacaResults(data: { veiculo_data: string }) {
 }
 
 function formatTelefoneResults(data: TelefoneResult): string {
-  resultString = '';
-  const [ddd, telefone, cpf, nome, tipo, logradouro, numero, bairro, cep, cidade, uf] = data;
+  let resultString = '';
+
+  // Verificando se a propriedade 'data' está definida e é uma matriz
+  if (data.data && Array.isArray(data.data)) {
+    const [DDD, TELEFONE, CPF_CNPJ, NOME, TIPO, LOGRADOURO, NUMERO, BAIRRO, CEP, CIDADE, UF] = data.data[0];
 
     resultString += `
-    DDD: ${ddd || 'Não encontrado'}
-    TELEFONE: ${telefone || 'Não encontrado'}
-    CPF_CNPJ: ${cpf || 'Não encontrado'}
-    NOME: ${nome || 'Não encontrado'}
-    TIPO: ${tipo === 'F - FEMININO' ? 'Feminino' : 'Masculino'}
-    LOGRADOURO: ${logradouro || 'Não encontrado'}
-    NUMERO: ${numero || 'Não encontrado'}
-    BAIRRO: ${bairro  || 'Não encontrado'}
-    CEP: ${cep || 'Não encontrado'}
-    CIDADE: ${cidade || 'Não encontrado'}
-    UF: ${uf || 'Não encontrado'}
-    
+      DDD: ${DDD || 'Não encontrado'}
+      TELEFONE: ${TELEFONE || 'Não encontrado'}
+      CPF_CNPJ: ${CPF_CNPJ || 'Não encontrado'}
+      NOME: ${NOME || 'Não encontrado'}
+      TIPO: ${TIPO === 'F - FEMININO' ? 'Feminino' : 'Masculino'}
+      LOGRADOURO: ${LOGRADOURO || 'Não encontrado'}
+      NUMERO: ${NUMERO || 'Não encontrado'}
+      BAIRRO: ${BAIRRO || 'Não encontrado'}
+      CEP: ${CEP || 'Não encontrado'}
+      CIDADE: ${CIDADE || 'Não encontrado'}
+      UF: ${UF || 'Não encontrado'}
     `;
+  } else {
+    resultString = 'Dados não disponíveis';
+  }
 
   return resultString;
 }
+
 
 function formatTitleResults(data: TitleResult[]): string {
   let resultString = ''; // Inicialização da variável resultString aqui
