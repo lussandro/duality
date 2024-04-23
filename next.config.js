@@ -11,12 +11,12 @@ module.exports = {
     return [
       {
         source: '/whatsapp',
-        destination: 'https://wa.me/5511954432178',
+        destination: 'https://wa.me/5548999357781',
         permanent: true,
       },
       {
         source: '/telegram',
-        destination: 'https://t.me/findy_buscas_bot',
+        destination: 'https://t.me/luss2024',
         permanent: true,
       },
     ];
