@@ -131,6 +131,20 @@ const modules = [
       
     ],
     charactersToRemove: ['+', '(', ')', '-', ' '],
+  },
+  {
+    name: 'COVID-19',
+    url: 'covid',
+    api: '/api/consultar',
+    placeholder: 'Digite o Numero do documento:',
+    submodules: [
+      { name: 'CPF', api: '/cpfcovid' },
+      { name: 'NIS', api: '/nis' },
+      { name: 'Nome', api: '/cpfcovid' },
+      { name: 'Telefone', api: '/fonecovid' }
+      
+    ],
+    charactersToRemove: ['+', '(', ')', '-', ' '],
   }
 ];
 

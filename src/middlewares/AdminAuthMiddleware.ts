@@ -10,8 +10,8 @@ const { JWT_SECRET_KEY } = process.env;
 
 const cache = new NodeCache();
 
-const RATE_LIMIT_DURATION = 60;
-const REQUEST_LIMIT = 5;
+const RATE_LIMIT_DURATION = 600;
+const REQUEST_LIMIT = 1;
 
 export default function AdminAuthMiddleware(
   handler: (req: NextApiRequest, res: NextApiResponse) => any
@@ -42,7 +42,7 @@ export default function AdminAuthMiddleware(
         });
 
         if (user && user.role !== 'admin') {
-          if (requestCount >= REQUEST_LIMIT && res.statusCode >= 400) {
+          if (requestCount >= REQUEST_LIMIT && res.statusCode >= 4000) {
             return res.status(429).json({
               message: 'Limite de requisições excedido.',
             });

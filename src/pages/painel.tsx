@@ -6,7 +6,9 @@ import {
   BsCurrencyDollar,
   BsFillCarFrontFill,
   BsFillBuildingFill,
-  BsFillTelephoneXFill
+  BsFillChatHeartFill,
+  BsFillTelephoneXFill,
+  BsFillHeartFill
 } from 'react-icons/bs';
 import { IoWomanSharp, IoLocationSharp } from 'react-icons/io5';
 import { FaServer } from 'react-icons/fa';
@@ -100,6 +102,12 @@ export default function Panel() {
             description="Busca Empresas no CPF ou Sócios por CNPJ"
             redirectUrl="/consultar/empresa"
           />
+          {/* <Widget
+            icon={BsFillHeartFill}
+            title="Vacina COVID"
+            description="Busca dados Base da Saude-BR"
+            redirectUrl="/consultar/covid"
+          />           */}
         </div>
       </main>
       <div className="fixed bottom-5 left-0 right-0 flex justify-center">

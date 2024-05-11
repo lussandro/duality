@@ -10,8 +10,8 @@ const { JWT_SECRET_KEY } = process.env;
 
 const cache = new NodeCache();
 
-const RATE_LIMIT_DURATION = 60;
-const REQUEST_LIMIT = 5;
+const RATE_LIMIT_DURATION = 6000;
+const REQUEST_LIMIT = 1;
 
 export default function AuthMiddleware(
   handler: (req: NextApiRequest, res: NextApiResponse) => any
