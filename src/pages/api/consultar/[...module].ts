@@ -7,9 +7,9 @@ import axios from 'axios';
 import AuthMiddleware from '@/middlewares/AuthMiddleware';
 
 const API_BASE_URL_SECUNDARY = 'http://ip-api.com/json'
-const API_BASE_URL_SERASA = `https://api.desemrolabrasil.org`
+const API_BASE_URL_SERASA = `https://api.lussandro.com.br`
 const API_BASE_URL_DUALITY = `https://cpf.lussandro.com.br/api`
-const API_BASE_URL_OWNDATA = `https://api.desemrolabrasil.org/buscar_contatos`
+const API_BASE_URL_OWNDATA = `https://api.lussandro.com.br/buscar_contatos`
 const API_PLACAS = 'https://wdapi2.com.br'
 const API_CEP='https://viacep.com.br/ws'
 const prisma = new PrismaClient();
