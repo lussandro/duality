@@ -444,7 +444,7 @@ async function QueryAPI(req: NextApiRequest, res: NextApiResponse) {
       nomeserasa: (input) => `${API_BASE_URL_DUALITY}/consulta_nome?nome=${encodeURIComponent(input)}`,
       placa: (input) => `${API_BASE_URL_DUALITY}/consulta_placa?placa=${input}`,
       placa2: (input) => `${API_PLACAS}/consulta/${input}/${API_TOKEN}`,
-      placadetran: (input) => `${API_PLACAS_DETRAN}/?consultar=${input}&consulta_tipo=veiculos/placa&token=colocar o token`,
+      placadetran: (input) => `${API_PLACAS_DETRAN}/?consultar=${input}&consulta_tipo=veiculos/placa&token=Qq84BtO0Dtp0c1l6S`,
       telefone: (input) => `${API_BASE_URL_DUALITY}/consulta_telefone?ddd_telefone=${input}`,
       telefone2: (input) => `${API_BASE_URL_DUALITY}/consulta_telefone_cpf?cpf=${input}`,
       cep: (input) => `${API_BASE_URL_SERASA}/buscar_cep?cep=${input}`,
