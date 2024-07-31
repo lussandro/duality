@@ -21,6 +21,16 @@ const modules = [
     charactersToRemove: ['.', '-', ' '],
   },
   {
+    name: 'Score SPC',
+    url: 'spc',
+    api: '/api/consultar',
+    placeholder: 'Digite o CPF',
+    submodules: [
+      { name: 'Serasa', api: '/spc' },
+    ],
+    charactersToRemove: [' '],
+  },
+  {
     name: 'Email',
     url: 'email',
     api: '/api/consultar',
@@ -41,12 +51,32 @@ const modules = [
     charactersToRemove: [' '],
   },
   {
+    name: 'Placas Detran',
+    url: 'placadetran',
+    api: '/api/consultar',
+    placeholder: 'Digite a placa',
+    submodules: [
+      { name: 'DETRAN', api: '/placadetran' },
+    ],
+    charactersToRemove: [' '],
+  },
+  {
     name: 'Placa',
     url: 'placa',
     api: '/api/consultar',
     placeholder: 'Digite a placa',
     submodules: [
       { name: 'DETRAN', api: '/placa' },
+    ],
+    charactersToRemove: [' '],
+  },
+  {
+    name: 'Placa Detran',
+    url: 'placadetran',
+    api: '/api/consultar',
+    placeholder: 'Digite a placa',
+    submodules: [
+      { name: 'DETRAN', api: '/placadetran' },
     ],
     charactersToRemove: [' '],
   },
@@ -119,6 +149,17 @@ const modules = [
       
     ],
     charactersToRemove: ['+', '(', ')', '-', ' '],
+  },
+  {
+    name: 'Busca Site',
+    url: 'site',
+    api: '/api/consultar',
+    placeholder: 'Digite o endereço sem https ou www:',
+    submodules: [
+      { name: 'dominio', api: '/site' }
+      
+    ],
+    charactersToRemove: [''],
   },
   {
     name: 'Empresa',

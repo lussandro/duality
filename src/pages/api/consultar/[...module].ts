@@ -11,6 +11,7 @@ const API_BASE_URL_SERASA = `https://api.lussandro.com.br`
 const API_BASE_URL_DUALITY = `https://cpf.lussandro.com.br/api`
 const API_BASE_URL_OWNDATA = `https://api.lussandro.com.br/buscar_contatos`
 const API_PLACAS = 'https://wdapi2.com.br'
+const API_PLACAS_DETRAN = 'https://flamesconsultas.store/apis'
 const API_CEP='https://viacep.com.br/ws'
 const prisma = new PrismaClient();
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
@@ -37,6 +38,108 @@ interface EmpresaResult {
   
   Participacao_Socio: string;
   Razao_Social: string;
+}
+interface WhoisResult {
+  domain: string;
+  owner: string;
+  ownerid: string;
+  responsible: string;
+  country: string;
+  "owner-c": string;
+  "tech-c": string;
+  nserver: string;
+  nsstat: string;
+  nslastaa: string;
+  saci: string;
+  created: string;
+  changed: string;
+  expires: string;
+  status: string;
+  provider: string;
+  "nic-hdl-br": string;
+  person: string;
+  "e-mail": string;
+}
+
+interface PlacaResultdetran {
+  alertSystemOutOfService: boolean;
+  alerts: any[];
+  billing: {
+    document: {
+      number: string;
+      type: string;
+    };
+    state: string;
+  };
+  capacity: {
+    chargeKg: number;
+    passengers: number;
+    totalGrossWeight: number;
+  };
+  completed: boolean;
+  general: {
+    characteristicsLastUpdate: string;
+    chassis: string;
+    color: string;
+    fuelType: string;
+    group: string;
+    markupChassis: boolean;
+    model: string;
+    mountingType: string;
+    plate: string;
+    renavam: string;
+    specie: string;
+    type: string;
+  };
+  hasAlert: boolean;
+  identifiers: {
+    auxiliaryShaft: string;
+    gearbox: string;
+    motor: string;
+    rearAxle: string;
+  };
+  import: {
+    declarationId: string;
+    importerId: string;
+  };
+  licensePlate: {
+    city: string;
+    cityId: string;
+    state: string;
+  };
+  mechanics: {
+    axleQuantity: number;
+    engineCapacity: number;
+    potencyHp: number;
+    tractionKg: number;
+  };
+  owner: {
+    document: {
+      number: string;
+      type: string;
+    };
+    name: string;
+  };
+  possessor: {
+    document: {
+      number: string;
+      type: string;
+    };
+    name: string;
+  };
+  provider: string;
+  renter: {
+    document: {
+      number: string;
+      type: string;
+    };
+    name: string;
+  };
+  restrictions: any[];
+  years: {
+    manufacture: number;
+    model: number;
+  };
 }
 
 interface EmpresaCpfResult {
@@ -336,10 +439,12 @@ async function QueryAPI(req: NextApiRequest, res: NextApiResponse) {
 
     const moduleUrlMap: Record<string, (input: string) => string> = {
       Ip: (input) => `${API_BASE_URL_SECUNDARY}/${input}?fields=16867865`,
+      site: (input) => `http://localhost:3008/whois/${input}`,
       cpf: (input) => `${API_BASE_URL_SERASA}/cpf/${input}`,
       nomeserasa: (input) => `${API_BASE_URL_DUALITY}/consulta_nome?nome=${encodeURIComponent(input)}`,
       placa: (input) => `${API_BASE_URL_DUALITY}/consulta_placa?placa=${input}`,
       placa2: (input) => `${API_PLACAS}/consulta/${input}/${API_TOKEN}`,
+      placadetran: (input) => `${API_PLACAS_DETRAN}/?consultar=${input}&consulta_tipo=veiculos/placa&token=colocar o token`,
       telefone: (input) => `${API_BASE_URL_DUALITY}/consulta_telefone?ddd_telefone=${input}`,
       telefone2: (input) => `${API_BASE_URL_DUALITY}/consulta_telefone_cpf?cpf=${input}`,
       cep: (input) => `${API_BASE_URL_SERASA}/buscar_cep?cep=${input}`,
@@ -374,12 +479,16 @@ function formatResults(module: string, data: any): string {
   switch (module) {
     case 'Ip':
       return formatIpResults(data as HostingData, resultString);
+    case 'site':
+      return formatWhoisResults(data as WhoisResult);      
     case 'cpf':
       return formatCpfResults(data as CpfResult);
     case 'placa':
       return formatPlacaResults(data as PlacaResult);
     case 'placa2':
         return formatPlacaResults2(data as PlacaResult2);
+    case 'placadetran':
+        return formatPlacaResultsdetran(data as PlacaResultdetran);
     case 'nomeserasa':  
       return formatNameResults(data as NomeResult[], 1500);
     case 'telefone':
@@ -406,6 +515,34 @@ function formatResults(module: string, data: any): string {
 export default AuthMiddleware(QueryAPI);
 
 let resultString = '';
+
+function formatWhoisResults(parsedResult: WhoisResult): string {
+  let resultString = '';
+
+  resultString += `
+Domínio: ${parsedResult.domain || 'Não encontrado'}
+Proprietário: ${parsedResult.owner || 'Não encontrado'}
+ID do Proprietário: ${parsedResult.ownerid || 'Não encontrado'}
+Responsável: ${parsedResult.responsible || 'Não encontrado'}
+País: ${parsedResult.country || 'Não encontrado'}
+Código do Proprietário: ${parsedResult["owner-c"] || 'Não encontrado'}
+Código Técnico: ${parsedResult["tech-c"] || 'Não encontrado'}
+Servidor de Nomes: ${parsedResult.nserver || 'Não encontrado'}
+Status do Servidor de Nomes: ${parsedResult.nsstat || 'Não encontrado'}
+Última Atualização do Servidor de Nomes: ${parsedResult.nslastaa || 'Não encontrado'}
+SACI: ${parsedResult.saci || 'Não encontrado'}
+Data de Criação: ${parsedResult.created || 'Não encontrado'}
+Data de Alteração: ${parsedResult.changed || 'Não encontrado'}
+Data de Expiração: ${parsedResult.expires || 'Não encontrado'}
+Status: ${parsedResult.status || 'Não encontrado'}
+Provedor: ${parsedResult.provider || 'Não encontrado'}
+NIC Handle BR: ${parsedResult["nic-hdl-br"] || 'Não encontrado'}
+Pessoa de Contato: ${parsedResult.person || 'Não encontrado'}
+Email: ${parsedResult["e-mail"] || 'Não encontrado'}
+`;
+
+  return resultString;
+}
 
 function formatPlacaResults2(parsedResult: PlacaResult2): string {
   let resultString = '';
@@ -481,6 +618,45 @@ function formatPlacaResults2(parsedResult: PlacaResult2): string {
   return resultString;
 }
 
+function formatPlacaResultsdetran(parsedResult: PlacaResultdetran[]): string {
+  if (!parsedResult || parsedResult.length === 0) {
+    return 'Nenhuma informação encontrada para a placa consultada.';
+  }
+
+  const data = parsedResult[0];
+  let resultString = '';
+
+  resultString += `
+Sistema de Alerta Fora de Serviço: ${data.alertSystemOutOfService ? 'Sim' : 'Não'}
+Estado de Cobrança: ${data.billing.state || 'Não encontrado'}
+Chassi: ${data.general.chassis || 'Não encontrado'}
+Cor: ${data.general.color || 'Não encontrado'}
+Tipo de Combustível: ${data.general.fuelType || 'Não encontrado'}
+Modelo: ${data.general.model || 'Não encontrado'}
+Placa: ${data.general.plate || 'Não encontrado'}
+Renavam: ${data.general.renavam || 'Não encontrado'}
+Tipo: ${data.general.type || 'Não encontrado'}
+Última Atualização das Características: ${data.general.characteristicsLastUpdate || 'Não encontrado'}
+
+Cidade da Placa: ${data.licensePlate.city || 'Não encontrado'}
+Estado da Placa: ${data.licensePlate.state || 'Não encontrado'}
+
+Capacidade de Passageiros: ${data.capacity.passengers || 'Não encontrado'}
+Potência do Motor (HP): ${data.mechanics.potencyHp || 'Não encontrado'}
+Capacidade do Motor (cc): ${data.mechanics.engineCapacity || 'Não encontrado'}
+
+Nome do Proprietário: ${data.owner.name || 'Não encontrado'}
+Documento do Proprietário: ${data.owner.document.number || 'Não encontrado'}
+
+Nome do Possuidor: ${data.possessor.name || 'Não encontrado'}
+Documento do Possuidor: ${data.possessor.document.number || 'Não encontrado'}
+
+Ano de Fabricação: ${data.years.manufacture || 'Não encontrado'}
+Ano do Modelo: ${data.years.model || 'Não encontrado'}
+`;
+
+  return resultString;
+}
 
 function formatCpfResults(parsedResult: CpfResult): string {
   let resultString = '';
@@ -622,25 +798,82 @@ function formatEmpresaCpfResults(data: EmpresaCpfResult | EmpresaCpfResult[]): s
 
 
 
-function formatPlacaResults(data: { veiculo_data: string }) {
+// function formatPlacaResults(data: { veiculo_data: string }) {
+//   let resultString = '';
+
+//   // Parse the veiculo_data string to JSON
+//   let veiculoData;
+//   try {
+//     veiculoData = JSON.parse(data.veiculo_data);
+//   } catch (e) {
+//     return 'Dados de veículo inválidos';
+//   }
+
+//   // Verifique se a chave 'veiculo_data' foi convertida corretamente
+//   if (veiculoData) {
+//     const {
+//       Chassi,
+//       Placa,
+//       Ano,
+//       Cor,
+//       Modelo,
+//       Tipo,
+//       Origem,
+//       Carroceria,
+//       Motor
+//     } = veiculoData;
+
+//     // Construa a string de resultados formatada
+//     resultString += `
+//       Chassi: ${Chassi || 'Não encontrado'}
+//       Placa: ${Placa || 'Não encontrado'}
+//       Ano: ${Ano || 'Não encontrado'}
+//       Cor: ${Cor || 'Não encontrado'}
+//       Modelo: ${Modelo || 'Não encontrado'}
+//       Tipo: ${Tipo || 'Não encontrado'}
+//       Origem: ${Origem || 'Não encontrado'}
+//       Carroceria: ${Carroceria || 'Não encontrado'}
+//       Motor: ${Motor || 'Não encontrado'}
+//     `;
+//   } else {
+//     // Se a chave 'veiculo_data' não existir nos dados, retorne uma mensagem de erro
+//     resultString = 'Dados de veículo não encontrados';
+//   }
+
+//   return resultString;
+// }
+
+function formatPlacaResults(data: PlacaResult) {
   let resultString = '';
 
-  // Verifique se a chave 'veiculo_data' existe nos dados recebidos
-  if ('veiculo_data' in data) {
-    // Desestruture os dados para acessar cada campo
-    const [chassi, placa, ano, cor, modelo, tipo, origem, carroceria, motor] = data.veiculo_data;
+  // Não há necessidade de JSON.parse, pois já recebemos um objeto
+  const veiculoData = data.veiculo_data;
+
+  // Verifique se veiculoData existe e é um objeto
+  if (veiculoData) {
+    const {
+      Chassi,
+      Placa,
+      Ano,
+      Cor,
+      Modelo,
+      Tipo,
+      Origem,
+      Carroceria,
+      Motor
+    } = veiculoData;
 
     // Construa a string de resultados formatada
     resultString += `
-      Chassi: ${chassi || 'Não encontrado'}
-      Placa: ${placa || 'Não encontrado'}
-      Ano: ${ano || 'Não encontrado'}
-      Cor: ${cor || 'Não encontrado'}
-      Modelo: ${modelo || 'Não encontrado'}
-      Tipo: ${tipo || 'Não encontrado'}
-      Origem: ${origem || 'Não encontrado'}
-      Carroceria: ${carroceria || 'Não encontrado'}
-      Motor: ${motor || 'Não encontrado'}
+      Chassi: ${Chassi || 'Não encontrado'}
+      Placa: ${Placa || 'Não encontrado'}
+      Ano: ${Ano || 'Não encontrado'}
+      Cor: ${Cor || 'Não encontrado'}
+      Modelo: ${Modelo || 'Não encontrado'}
+      Tipo: ${Tipo || 'Não encontrado'}
+      Origem: ${Origem || 'Não encontrado'}
+      Carroceria: ${Carroceria || 'Não encontrado'}
+      Motor: ${Motor || 'Não encontrado'}
     `;
   } else {
     // Se a chave 'veiculo_data' não existir nos dados, retorne uma mensagem de erro
@@ -650,19 +883,58 @@ function formatPlacaResults(data: { veiculo_data: string }) {
   return resultString;
 }
 
+// function formatTelefoneResults(data: TelefoneResult): string {
+//   let resultString = '';
+
+//   // Verificando se a propriedade 'data' está definida e é uma matriz
+//   if (data.data && Array.isArray(data.data)) {
+//     const [DDD, TELEFONE, CPF_CNPJ, NOME, TIPO, LOGRADOURO, NUMERO, BAIRRO, CEP, CIDADE, UF] = data.data[0];
+
+//     resultString += `
+//       DDD: ${DDD || 'Não encontrado'}
+//       TELEFONE: ${TELEFONE || 'Não encontrado'}
+//       CPF_CNPJ: ${CPF_CNPJ || 'Não encontrado'}
+//       NOME: ${NOME || 'Não encontrado'}
+//       TIPO: ${TIPO === 'F - FEMININO' ? 'Feminino' : 'Masculino'}
+//       LOGRADOURO: ${LOGRADOURO || 'Não encontrado'}
+//       NUMERO: ${NUMERO || 'Não encontrado'}
+//       BAIRRO: ${BAIRRO || 'Não encontrado'}
+//       CEP: ${CEP || 'Não encontrado'}
+//       CIDADE: ${CIDADE || 'Não encontrado'}
+//       UF: ${UF || 'Não encontrado'}
+//     `;
+//   } else {
+//     resultString = 'Dados não disponíveis';
+//   }
+
+//   return resultString;
+// }
+
 function formatTelefoneResults(data: TelefoneResult): string {
   let resultString = '';
 
-  // Verificando se a propriedade 'data' está definida e é uma matriz
-  if (data.data && Array.isArray(data.data)) {
-    const [DDD, TELEFONE, CPF_CNPJ, NOME, TIPO, LOGRADOURO, NUMERO, BAIRRO, CEP, CIDADE, UF] = data.data[0];
+  // Verificando se 'data' está definida e se é uma matriz não vazia
+  if (data.data && Array.isArray(data.data) && data.data.length > 0) {
+    const [
+      DDD,
+      TELEFONE,
+      CPF_CNPJ,
+      NOME,
+      TIPO,
+      LOGRADOURO,
+      NUMERO,
+      BAIRRO,
+      CEP,
+      CIDADE,
+      UF
+    ] = data.data[0];
 
     resultString += `
       DDD: ${DDD || 'Não encontrado'}
       TELEFONE: ${TELEFONE || 'Não encontrado'}
       CPF_CNPJ: ${CPF_CNPJ || 'Não encontrado'}
       NOME: ${NOME || 'Não encontrado'}
-      TIPO: ${TIPO === 'F - FEMININO' ? 'Feminino' : 'Masculino'}
+      TIPO: ${TIPO === 'F - FEMININO' ? 'Feminino' : TIPO === 'M - MASCULINO' ? 'Masculino' : 'Não encontrado'}
       LOGRADOURO: ${LOGRADOURO || 'Não encontrado'}
       NUMERO: ${NUMERO || 'Não encontrado'}
       BAIRRO: ${BAIRRO || 'Não encontrado'}
@@ -676,7 +948,6 @@ function formatTelefoneResults(data: TelefoneResult): string {
 
   return resultString;
 }
-
 
 function formatTitleResults(data: TitleResult[]): string {
   let resultString = ''; // Inicialização da variável resultString aqui
@@ -714,6 +985,36 @@ ISP: ${data.isp || 'Não encontrado'}
   return resultString;
 }
 
+// function formatNameResults(data: string[][], maxResults: number): string {
+//   let resultString = '';
+
+//   // Verificando se data é uma matriz
+//   if (Array.isArray(data)) {
+//     for (let i = 0; i < Math.min(data.length, maxResults); i++) {
+//       const result = data[i];
+//       resultString += `
+// CPF: ${result[1] || 'Não encontrado'}
+// RG: ${result[4] || 'Não encontrado'}
+// Nome: ${result[0] || 'Não encontrado'}
+// Nascimento: ${result[2] || 'Não encontrado'}
+// Sexo: ${result[5] === 'F - FEMININO' ? 'Feminino' : 'Masculino'}
+// Nome da Mãe: ${result[3] || 'Não encontrado'}
+// Título de Eleitor: ${result[7] || 'Não encontrado'}
+// Renda: ${result[5] || 'Não encontrado'}
+
+// `;
+//     }
+
+//     if (data.length > maxResults) {
+//       resultString += `\nExibindo apenas ${maxResults} de ${data.length} resultados.`;
+//     }
+//   } else {
+//     resultString = 'Dados não disponíveis';
+//   }
+
+//   return resultString;
+// }
+
 function formatNameResults(data: string[][], maxResults: number): string {
   let resultString = '';
 
@@ -726,14 +1027,15 @@ CPF: ${result[1] || 'Não encontrado'}
 RG: ${result[4] || 'Não encontrado'}
 Nome: ${result[0] || 'Não encontrado'}
 Nascimento: ${result[2] || 'Não encontrado'}
-Sexo: ${result[5] === 'F - FEMININO' ? 'Feminino' : 'Masculino'}
+Sexo: ${result[5] === 'F - FEMININO' ? 'Feminino' : result[5] === 'M - MASCULINO' ? 'Masculino' : 'Não encontrado'}
 Nome da Mãe: ${result[3] || 'Não encontrado'}
 Título de Eleitor: ${result[7] || 'Não encontrado'}
-Renda: ${result[5] || 'Não encontrado'}
+Renda: ${result[8] || 'Não encontrado'}
 
 `;
     }
 
+    // Se houver mais resultados do que o limite especificado, avise o usuário
     if (data.length > maxResults) {
       resultString += `\nExibindo apenas ${maxResults} de ${data.length} resultados.`;
     }

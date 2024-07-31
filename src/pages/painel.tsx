@@ -42,6 +42,12 @@ export default function Panel() {
             description="Consultando CPF com a melhor qualidade de dados"
             redirectUrl="/consultar/cpf"
           />
+            <Widget
+            icon={BsFillPersonVcardFill}
+            title="Score SPC"
+            description="Consultando dividas de um CPF"
+            redirectUrl="/consultar/spc"
+          />
           <Widget
             icon={BsFillPersonFill}
             title="Nome"
@@ -90,11 +96,24 @@ export default function Panel() {
             description="Informações a partir de qualquer endereço IP"
             redirectUrl="/consultar/ip"
           />
-            <Widget
+          <Widget
+            icon={FaServer}
+            title="Site"
+            description="Informações completas de um site"
+            redirectUrl="/consultar/site"
+          />
+          <Widget
             icon={BsFillCarFrontFill}
             title="PLACA 2.0"
             description="Informações completas através da PLACA"
             redirectUrl="/consultar/placa2"
+          />
+         
+            <Widget
+            icon={BsFillCarFrontFill}
+            title="PLACA DETRAN"
+            description="Informações atualizadas detran através da PLACA"
+            redirectUrl="/consultar/placadetran"
           />
           <Widget
             icon={BsFillBuildingFill}
