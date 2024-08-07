@@ -42,12 +42,12 @@ export default function Panel() {
             description="Consultando CPF com a melhor qualidade de dados"
             redirectUrl="/consultar/cpf"
           />
-            <Widget
+            {/* <Widget
             icon={BsFillPersonVcardFill}
             title="Score SPC"
             description="Consultando dividas de um CPF"
             redirectUrl="/consultar/spc"
-          />
+          /> */}
           <Widget
             icon={BsFillPersonFill}
             title="Nome"
@@ -66,30 +66,30 @@ export default function Panel() {
             description="Informações através da PLACA"
             redirectUrl="/consultar/placa"
           />
-          <Widget
+          {/* <Widget
             icon={IoMdMail}
             title="Email"
             description="Dados vinculados a um endereço de e-mail"
             redirectUrl="/consultar/email"
-          />
-          <Widget
+          /> */}
+          {/* <Widget
             icon={IoLocationSharp}
             title="CEP"
             description="Informações completas de um CEP"
             redirectUrl="/consultar/cep"
-          />
+          /> */}
           <Widget
             icon={IoWomanSharp}
             title="Mãe"
             description="Trás todos os filhos atráves do nome da Mãe"
             redirectUrl="/consultar/mae"
           />
-          <Widget
+          {/* <Widget
             icon={BsFillPersonBadgeFill}
             title="Titulo Eleitor"
             description="Dados a partir do título de eleitor brasileiro"
             redirectUrl="/consultar/eleitor"
-          />
+          /> */}
           <Widget
             icon={FaServer}
             title="IP"
@@ -115,12 +115,12 @@ export default function Panel() {
             description="Informações atualizadas detran através da PLACA"
             redirectUrl="/consultar/placadetran"
           />
-          <Widget
+          {/* <Widget
             icon={BsFillBuildingFill}
             title="CNPJ"
             description="Busca Empresas no CPF ou Sócios por CNPJ"
             redirectUrl="/consultar/empresa"
-          />
+          /> */}
           {/* <Widget
             icon={BsFillHeartFill}
             title="Vacina COVID"

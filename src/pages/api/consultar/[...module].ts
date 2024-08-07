@@ -7,9 +7,9 @@ import axios from 'axios';
 import AuthMiddleware from '@/middlewares/AuthMiddleware';
 
 const API_BASE_URL_SECUNDARY = 'http://ip-api.com/json'
-const API_BASE_URL_SERASA = `https://api.lussandro.com.br`
-const API_BASE_URL_DUALITY = `https://cpf.lussandro.com.br/api`
-const API_BASE_URL_OWNDATA = `https://api.lussandro.com.br/buscar_contatos`
+const API_BASE_URL_SERASA = `http://192.168.1.6:5008`
+const API_BASE_URL_DUALITY = `http://192.168.1.6:5000/api`
+const API_BASE_URL_OWNDATA = `http://192.168.1.6:5000/buscar_contatos`
 const API_PLACAS = 'https://wdapi2.com.br'
 const API_PLACAS_DETRAN = 'https://flamesconsultas.store/apis'
 const API_CEP='https://viacep.com.br/ws'
@@ -142,29 +142,6 @@ interface PlacaResultdetran {
   };
 }
 
-interface EmpresaCpfResult {
-  CNPJ: string;
-  Data_Fundacao: string;
-  Endereco: {
-    Bairro: string;
-    CEP: string;
-    Cidade: string;
-    Complemento: string;
-    Nome: string;
-    NUmero: string;
-    Tipo: string;
-    Titulo: string;
-    UF: string;
-    Razao_Social: string;
-    }
-    Socios: {
-      CPF: string;
-      Nome: string;
-      Participacao: string;
-    }
-  }
-  
-
 
 
 interface HostingData {
@@ -185,44 +162,46 @@ interface CpfResult {
   CD_MOSAIC_SECUNDARIO: string;
   CD_SIT_CAD: string;
   CONTATOS_ID: string;
-  CONTATOS_ID_CONJUGE: string;
+  CONTATOS_ID_CONJUGE?: string;
   CPF: string;
   DT_INFORMACAO: string;
-  DT_OB: string;
+  DT_OB?: string;
   DT_SIT_CAD: string;
   ESTCIV: string;
-  FAIXA_RENDA_ID: string;
-  NACIONALID: string;
+  FAIXA_RENDA_ID?: string;
+  NACIONALID?: string;
   NASC: string;
   NOME: string;
   NOME_MAE: string;
-  NOME_PAI: string;
+  NOME_PAI?: string;
   ORGAO_EMISSOR: string;
-  RENDA: string;
+  RENDA?: string;
   RG: string;
   SEXO: string;
-  SO: string;
+  SO: boolean;
   TITULO_ELEITOR: string;
   UF_EMISSAO: string;
-  emails: string[];
+  emails: { EMAIL: string }[];
   enderecos: {
     BAIRRO: string;
     CEP: string;
     CIDADE: string;
     ENDERECO: string;
-    LOGRADOURO: string;
     NUMERO: string;
   }[];
   irmaos: {
+    nome: string;
     cpf: string;
     nasc: string;
-    nome: string;
+    vinculo: string;
   }[];
   telefones: {
     DDD: string;
     NUMERO: string;
+    INST: string;
   }[];
 }
+
 
 
 interface PlacaResult {
@@ -343,46 +322,26 @@ interface NomeResult {
   CPF: string;
   NASC: string;
   NOME_MAE: string;
-  RG: string;
-  SEXO: string;
-  TITULO_ELEITOR: string;
-
 }
 
 interface TelefoneResult {
-  data: {
-      DDD: string;
-      TELEFONE: string;
-      CPF_CNPJ: string;
-      NOME: string;
-      TIPO: string;
-      LOGRADOURO: string;
-      NUMERO: string;
-      BAIRRO: string;
-      CEP: string;
-      CIDADE: string;
-      UF: string;
-      
-    }
-  }
+  results: {
+    ddd: string;
+    telefone: string;
+    cpf_cnpj?: string; // Campo opcional, pode ser CPF ou CNPJ
+    cnpj?: string; 
+    cpf?: string;    // Campo opcional, específico para CNPJ
+    nome: string;
+    source: string;
+    data: string;
+  }[];
+}
 
 interface MailResult {
   cpf: string;
   nome: string;
 }
 
-interface CepResult {
-  DDD: string;
-  FONE: string;
-  CPF: string;
-  NOME: string;
-  TIPO: string;
-  LOGRADOURO: string;
-  NUMERO: string;
-  BAIRRO: string;
-  UF: string;
-  OUTROS: string;
-}
 
 interface MotherResult {
   cpf_cnpj: string;
@@ -441,7 +400,7 @@ async function QueryAPI(req: NextApiRequest, res: NextApiResponse) {
       Ip: (input) => `${API_BASE_URL_SECUNDARY}/${input}?fields=16867865`,
       site: (input) => `http://localhost:3008/whois/${input}`,
       cpf: (input) => `${API_BASE_URL_SERASA}/cpf/${input}`,
-      nomeserasa: (input) => `${API_BASE_URL_DUALITY}/consulta_nome?nome=${encodeURIComponent(input)}`,
+      nomeserasa: (input) => `${API_BASE_URL_SERASA}/nome/${input}`,
       placa: (input) => `${API_BASE_URL_DUALITY}/consulta_placa?placa=${input}`,
       placa2: (input) => `${API_PLACAS}/consulta/${input}/${API_TOKEN}`,
       placadetran: (input) => `${API_PLACAS_DETRAN}/?consultar=${input}&consulta_tipo=veiculos/placa&token=Qq84BtO0Dtp0c1l6S`,
@@ -486,27 +445,25 @@ function formatResults(module: string, data: any): string {
     case 'placa':
       return formatPlacaResults(data as PlacaResult);
     case 'placa2':
-        return formatPlacaResults2(data as PlacaResult2);
+      return formatPlacaResults2(data as PlacaResult2);
     case 'placadetran':
-        return formatPlacaResultsdetran(data as PlacaResultdetran);
+      return formatPlacaResultsdetran(data[0] as PlacaResultdetran);
     case 'nomeserasa':  
-      return formatNameResults(data as NomeResult[], 1500);
+      return formatNameResults(data as { cpf: string; mae: string; nasc: string; nome: string }[], 1500);
     case 'telefone':
       return formatTelefoneResults(data as TelefoneResult);
     case 'telefone2':
       return formatTelefoneResults(data.data as TelefoneResult);
     case 'mail':
       return formatMailResults(data as MailResult[]);
-    case 'cep':
-      return formatCepResults(data as CepResult[], 500);
+
     case 'title':
-      return formatTitleResults(data as TitleResult);      
-    case 'mother':
-      return formatMotherResults(data as MotherResult[]);
+      return formatTitleResults(data as TitleResult[]);      
+      case 'mother':
+        return formatMotherResults(data as [string, string][]);
     case 'cpfsocio':
       return formatEmpresaResults(data as EmpresaResult[]);
-      case 'cnpj':
-        return formatEmpresaCpfResults(data as EmpresaCpfResult[]);
+      
     default:
       return '';
   }
@@ -618,45 +575,41 @@ function formatPlacaResults2(parsedResult: PlacaResult2): string {
   return resultString;
 }
 
-function formatPlacaResultsdetran(parsedResult: PlacaResultdetran[]): string {
-  if (!parsedResult || parsedResult.length === 0) {
-    return 'Nenhuma informação encontrada para a placa consultada.';
-  }
-
-  const data = parsedResult[0];
+function formatPlacaResultsdetran(parsedResult: PlacaResultdetran): string {
   let resultString = '';
 
   resultString += `
-Sistema de Alerta Fora de Serviço: ${data.alertSystemOutOfService ? 'Sim' : 'Não'}
-Estado de Cobrança: ${data.billing.state || 'Não encontrado'}
-Chassi: ${data.general.chassis || 'Não encontrado'}
-Cor: ${data.general.color || 'Não encontrado'}
-Tipo de Combustível: ${data.general.fuelType || 'Não encontrado'}
-Modelo: ${data.general.model || 'Não encontrado'}
-Placa: ${data.general.plate || 'Não encontrado'}
-Renavam: ${data.general.renavam || 'Não encontrado'}
-Tipo: ${data.general.type || 'Não encontrado'}
-Última Atualização das Características: ${data.general.characteristicsLastUpdate || 'Não encontrado'}
+Sistema de Alerta Fora de Serviço: ${parsedResult.alertSystemOutOfService ? 'Sim' : 'Não'}
+Estado de Cobrança: ${parsedResult.billing.state || 'Não encontrado'}
+Chassi: ${parsedResult.general.chassis || 'Não encontrado'}
+Cor: ${parsedResult.general.color || 'Não encontrado'}
+Tipo de Combustível: ${parsedResult.general.fuelType || 'Não encontrado'}
+Modelo: ${parsedResult.general.model || 'Não encontrado'}
+Placa: ${parsedResult.general.plate || 'Não encontrado'}
+Renavam: ${parsedResult.general.renavam || 'Não encontrado'}
+Tipo: ${parsedResult.general.type || 'Não encontrado'}
+Última Atualização das Características: ${parsedResult.general.characteristicsLastUpdate || 'Não encontrado'}
 
-Cidade da Placa: ${data.licensePlate.city || 'Não encontrado'}
-Estado da Placa: ${data.licensePlate.state || 'Não encontrado'}
+Cidade da Placa: ${parsedResult.licensePlate.city || 'Não encontrado'}
+Estado da Placa: ${parsedResult.licensePlate.state || 'Não encontrado'}
 
-Capacidade de Passageiros: ${data.capacity.passengers || 'Não encontrado'}
-Potência do Motor (HP): ${data.mechanics.potencyHp || 'Não encontrado'}
-Capacidade do Motor (cc): ${data.mechanics.engineCapacity || 'Não encontrado'}
+Capacidade de Passageiros: ${parsedResult.capacity.passengers || 'Não encontrado'}
+Potência do Motor (HP): ${parsedResult.mechanics.potencyHp || 'Não encontrado'}
+Capacidade do Motor (cc): ${parsedResult.mechanics.engineCapacity || 'Não encontrado'}
 
-Nome do Proprietário: ${data.owner.name || 'Não encontrado'}
-Documento do Proprietário: ${data.owner.document.number || 'Não encontrado'}
+Nome do Proprietário: ${parsedResult.owner.name || 'Não encontrado'}
+Documento do Proprietário: ${parsedResult.owner.document.number || 'Não encontrado'}
 
-Nome do Possuidor: ${data.possessor.name || 'Não encontrado'}
-Documento do Possuidor: ${data.possessor.document.number || 'Não encontrado'}
+Nome do Possuidor: ${parsedResult.possessor.name || 'Não encontrado'}
+Documento do Possuidor: ${parsedResult.possessor.document.number || 'Não encontrado'}
 
-Ano de Fabricação: ${data.years.manufacture || 'Não encontrado'}
-Ano do Modelo: ${data.years.model || 'Não encontrado'}
+Ano de Fabricação: ${parsedResult.years.manufacture || 'Não encontrado'}
+Ano do Modelo: ${parsedResult.years.model || 'Não encontrado'}
 `;
 
   return resultString;
 }
+
 
 function formatCpfResults(parsedResult: CpfResult): string {
   let resultString = '';
@@ -671,15 +624,16 @@ Nome do Pai: ${parsedResult.NOME_PAI || 'Não encontrado'}
 RG: ${parsedResult.RG || 'Não encontrado'}
 CBO: ${parsedResult.CBO || 'Não encontrado'}
 Orgão Emissor: ${parsedResult.ORGAO_EMISSOR || 'Não encontrado'}
-Estado da Emissão: ${parsedResult.DT_SIT_CAD || 'Não encontrado'}
-DATA DA OB: ${parsedResult.DT_OB || 'Não encontrado'}
-RENDA MENSAL: ${parsedResult.RENDA || 'Não encontrado'}
-Titulo de Eleitor: ${parsedResult.TITULO_ELEITOR || 'Não encontrado'}\n`;
+Estado da Emissão: ${parsedResult.UF_EMISSAO || 'Não encontrado'}
+Data da OB: ${parsedResult.DT_OB || 'Não encontrado'}
+Renda Mensal: ${parsedResult.RENDA || 'Não encontrado'}
+Título de Eleitor: ${parsedResult.TITULO_ELEITOR || 'Não encontrado'}
+Estado Civil: ${parsedResult.ESTCIV || 'Não encontrado'}\n`;
 
   if (parsedResult.enderecos && parsedResult.enderecos.length > 0) {
     resultString += '\nEndereços:\n';
     parsedResult.enderecos.forEach((address, index) => {
-      resultString += `${index + 1}. ${address.LOGRADOURO}, ${address.ENDERECO}, ${address.NUMERO} - ${address.BAIRRO} - ${address.CIDADE}/${address.UF}\n`;
+      resultString += `${index + 1}. ${address.ENDERECO}, ${address.NUMERO} - ${address.BAIRRO} - ${address.CIDADE} - ${address.CEP}\n`;
     });
   } else {
     resultString += '\nEndereços: Não encontrado\n';
@@ -694,26 +648,27 @@ Titulo de Eleitor: ${parsedResult.TITULO_ELEITOR || 'Não encontrado'}\n`;
     resultString += '\nTelefones: Não encontrado\n';
   }
 
-  if (parsedResult.emails && parsedResult.emails.length > 0) {
-    resultString += '\nEmails:\n';
-    parsedResult.emails.forEach((email, index) => {
-      resultString += `${index + 1}. ${email}\n`;
-    });
-  } else {
-    resultString += '\nEmails: Não encontrado\n';
-  }
-
   if (parsedResult.irmaos && parsedResult.irmaos.length > 0) {
     resultString += '\nParentes:\n';
     parsedResult.irmaos.forEach((irmao, index) => {
-      resultString += `${index + 1}. CPF: ${irmao.cpf}, Nome: ${irmao.nome}, Vinculo: ${irmao.vinculo}\n`;
+      resultString += `${index + 1}. Nome: ${irmao.nome}, CPF: ${irmao.cpf}, Vínculo: ${irmao.vinculo}\n`;
     });
   } else {
     resultString += '\nParentes: Não encontrado\n';
   }
 
+  if (parsedResult.emails && parsedResult.emails.length > 0) {
+    resultString += '\nEmails:\n';
+    parsedResult.emails.forEach((emailObj, index) => {
+      resultString += `${index + 1}. ${emailObj.EMAIL}\n`;
+    });
+  } else {
+    resultString += '\nEmails: Não encontrado\n';
+  }
+
   return resultString;
 }
+
 
 function formatEmpresaResults(data: EmpresaResult[]): string {
   let resultString = ''; // Inicialização da variável resultString aqui
@@ -750,98 +705,7 @@ function formatEmpresaResults(data: EmpresaResult[]): string {
   return resultString;
 }
 
-function formatEmpresaCpfResults(data: EmpresaCpfResult | EmpresaCpfResult[]): string {
-  let resultString = ''; // Inicialização da variável resultString aqui
-  console.log('Estou dentro da função');
 
-  // Verifica se os dados são um array ou um único objeto
-  const dataArray = Array.isArray(data) ? data : [data];
-
-  // Itera sobre cada objeto de empresa
-  dataArray.forEach(empresa => {
-    resultString += `
-      CNPJ: ${empresa.CNPJ || 'Não encontrado'}
-      Razão Social: ${empresa.Razao_Social || 'Não encontrado'}
-      Data de Fundação: ${empresa.Data_Fundacao || 'Não encontrado'}\n
-      Endereço:\n
-        Bairro: ${empresa.Endereco.Bairro || 'Não encontrado'}
-        CEP: ${empresa.Endereco.CEP || 'Não encontrado'}
-        Cidade: ${empresa.Endereco.Cidade || 'Não encontrado'}
-        Complemento: ${empresa.Endereco.Complemento || 'Não encontrado'}
-        Nome: ${empresa.Endereco.Nome || 'Não encontrado'}
-        Número: ${empresa.Endereco.Numero || 'Não encontrado'}
-        Tipo: ${empresa.Endereco.Tipo || 'Não encontrado'}
-        Título: ${empresa.Endereco.Titulo || 'Não encontrado'}
-        UF: ${empresa.Endereco.UF || 'Não encontrado'}
-    `;
-
-    // Verifica se há sócios e adiciona ao resultado
-    if (empresa.Socios && empresa.Socios.length > 0) {
-      resultString += '\nSócios:\n';
-      empresa.Socios.forEach(socio => {
-        resultString += `
-            Nome: ${socio.Nome || 'Não encontrado'}
-            CPF: ${socio.CPF || 'Não encontrado'}
-            Participação: ${socio.Participacao || 'Não encontrado'}
-        `;
-      });
-    } else {
-      resultString += '\nSócios não encontrados.\n';
-    }
-
-    // Adiciona uma quebra de linha entre cada empresa
-    resultString += '\n\n';
-  });
-
-  return resultString;
-}
-
-
-
-// function formatPlacaResults(data: { veiculo_data: string }) {
-//   let resultString = '';
-
-//   // Parse the veiculo_data string to JSON
-//   let veiculoData;
-//   try {
-//     veiculoData = JSON.parse(data.veiculo_data);
-//   } catch (e) {
-//     return 'Dados de veículo inválidos';
-//   }
-
-//   // Verifique se a chave 'veiculo_data' foi convertida corretamente
-//   if (veiculoData) {
-//     const {
-//       Chassi,
-//       Placa,
-//       Ano,
-//       Cor,
-//       Modelo,
-//       Tipo,
-//       Origem,
-//       Carroceria,
-//       Motor
-//     } = veiculoData;
-
-//     // Construa a string de resultados formatada
-//     resultString += `
-//       Chassi: ${Chassi || 'Não encontrado'}
-//       Placa: ${Placa || 'Não encontrado'}
-//       Ano: ${Ano || 'Não encontrado'}
-//       Cor: ${Cor || 'Não encontrado'}
-//       Modelo: ${Modelo || 'Não encontrado'}
-//       Tipo: ${Tipo || 'Não encontrado'}
-//       Origem: ${Origem || 'Não encontrado'}
-//       Carroceria: ${Carroceria || 'Não encontrado'}
-//       Motor: ${Motor || 'Não encontrado'}
-//     `;
-//   } else {
-//     // Se a chave 'veiculo_data' não existir nos dados, retorne uma mensagem de erro
-//     resultString = 'Dados de veículo não encontrados';
-//   }
-
-//   return resultString;
-// }
 
 function formatPlacaResults(data: PlacaResult) {
   let resultString = '';
@@ -883,71 +747,50 @@ function formatPlacaResults(data: PlacaResult) {
   return resultString;
 }
 
-// function formatTelefoneResults(data: TelefoneResult): string {
-//   let resultString = '';
-
-//   // Verificando se a propriedade 'data' está definida e é uma matriz
-//   if (data.data && Array.isArray(data.data)) {
-//     const [DDD, TELEFONE, CPF_CNPJ, NOME, TIPO, LOGRADOURO, NUMERO, BAIRRO, CEP, CIDADE, UF] = data.data[0];
-
-//     resultString += `
-//       DDD: ${DDD || 'Não encontrado'}
-//       TELEFONE: ${TELEFONE || 'Não encontrado'}
-//       CPF_CNPJ: ${CPF_CNPJ || 'Não encontrado'}
-//       NOME: ${NOME || 'Não encontrado'}
-//       TIPO: ${TIPO === 'F - FEMININO' ? 'Feminino' : 'Masculino'}
-//       LOGRADOURO: ${LOGRADOURO || 'Não encontrado'}
-//       NUMERO: ${NUMERO || 'Não encontrado'}
-//       BAIRRO: ${BAIRRO || 'Não encontrado'}
-//       CEP: ${CEP || 'Não encontrado'}
-//       CIDADE: ${CIDADE || 'Não encontrado'}
-//       UF: ${UF || 'Não encontrado'}
-//     `;
-//   } else {
-//     resultString = 'Dados não disponíveis';
-//   }
-
-//   return resultString;
-// }
-
 function formatTelefoneResults(data: TelefoneResult): string {
   let resultString = '';
 
-  // Verificando se 'data' está definida e se é uma matriz não vazia
-  if (data.data && Array.isArray(data.data) && data.data.length > 0) {
-    const [
-      DDD,
-      TELEFONE,
-      CPF_CNPJ,
-      NOME,
-      TIPO,
-      LOGRADOURO,
-      NUMERO,
-      BAIRRO,
-      CEP,
-      CIDADE,
-      UF
-    ] = data.data[0];
+  // Verificando se 'data.results' está definida e é uma matriz não vazia
+  if (data.results && Array.isArray(data.results) && data.results.length > 0) {
+    data.results.forEach(result => {
+      const {
+        ddd,
+        telefone,
+        cpf_cnpj,
+        cnpj,
+        cpf,
+        data,
+        nome,
+        source
+      } = result;
 
-    resultString += `
-      DDD: ${DDD || 'Não encontrado'}
-      TELEFONE: ${TELEFONE || 'Não encontrado'}
-      CPF_CNPJ: ${CPF_CNPJ || 'Não encontrado'}
-      NOME: ${NOME || 'Não encontrado'}
-      TIPO: ${TIPO === 'F - FEMININO' ? 'Feminino' : TIPO === 'M - MASCULINO' ? 'Masculino' : 'Não encontrado'}
-      LOGRADOURO: ${LOGRADOURO || 'Não encontrado'}
-      NUMERO: ${NUMERO || 'Não encontrado'}
-      BAIRRO: ${BAIRRO || 'Não encontrado'}
-      CEP: ${CEP || 'Não encontrado'}
-      CIDADE: ${CIDADE || 'Não encontrado'}
-      UF: ${UF || 'Não encontrado'}
-    `;
+      let identificador = 'Não encontrado';
+      if (cpf_cnpj) {
+        identificador = `CPF/CNPJ: ${cpf_cnpj}`;
+      } else if (cnpj) {
+        identificador = `CNPJ: ${cnpj}`;
+      } else if (cpf) {
+        identificador = `CPF: ${cpf}`;
+      }
+
+      resultString += `
+      ----------------------------------------
+      Nome: ${nome || 'Não encontrado'}
+      Source: ${source || 'Não encontrado'}
+      DDD: ${ddd || 'Não encontrado'}
+      Telefone: ${telefone || 'Não encontrado'}
+      ${identificador}
+      Instalacação: ${data || 'Null'}
+      ----------------------------------------
+      `;
+    });
   } else {
     resultString = 'Dados não disponíveis';
   }
 
   return resultString;
 }
+
 
 function formatTitleResults(data: TitleResult[]): string {
   let resultString = ''; // Inicialização da variável resultString aqui
@@ -970,6 +813,7 @@ function formatTitleResults(data: TitleResult[]): string {
 
   return resultString;
 }
+
 function formatIpResults(data: HostingData, resultString: string) {
   resultString = '';
 
@@ -985,53 +829,20 @@ ISP: ${data.isp || 'Não encontrado'}
   return resultString;
 }
 
-// function formatNameResults(data: string[][], maxResults: number): string {
-//   let resultString = '';
 
-//   // Verificando se data é uma matriz
-//   if (Array.isArray(data)) {
-//     for (let i = 0; i < Math.min(data.length, maxResults); i++) {
-//       const result = data[i];
-//       resultString += `
-// CPF: ${result[1] || 'Não encontrado'}
-// RG: ${result[4] || 'Não encontrado'}
-// Nome: ${result[0] || 'Não encontrado'}
-// Nascimento: ${result[2] || 'Não encontrado'}
-// Sexo: ${result[5] === 'F - FEMININO' ? 'Feminino' : 'Masculino'}
-// Nome da Mãe: ${result[3] || 'Não encontrado'}
-// Título de Eleitor: ${result[7] || 'Não encontrado'}
-// Renda: ${result[5] || 'Não encontrado'}
 
-// `;
-//     }
-
-//     if (data.length > maxResults) {
-//       resultString += `\nExibindo apenas ${maxResults} de ${data.length} resultados.`;
-//     }
-//   } else {
-//     resultString = 'Dados não disponíveis';
-//   }
-
-//   return resultString;
-// }
-
-function formatNameResults(data: string[][], maxResults: number): string {
+function formatNameResults(data: { cpf: string; mae: string; nasc: string; nome: string }[], maxResults: number): string {
   let resultString = '';
 
-  // Verificando se data é uma matriz
+  // Verificando se data é um array
   if (Array.isArray(data)) {
     for (let i = 0; i < Math.min(data.length, maxResults); i++) {
       const result = data[i];
       resultString += `
-CPF: ${result[1] || 'Não encontrado'}
-RG: ${result[4] || 'Não encontrado'}
-Nome: ${result[0] || 'Não encontrado'}
-Nascimento: ${result[2] || 'Não encontrado'}
-Sexo: ${result[5] === 'F - FEMININO' ? 'Feminino' : result[5] === 'M - MASCULINO' ? 'Masculino' : 'Não encontrado'}
-Nome da Mãe: ${result[3] || 'Não encontrado'}
-Título de Eleitor: ${result[7] || 'Não encontrado'}
-Renda: ${result[8] || 'Não encontrado'}
-
+Nome: ${result.nome || 'Não encontrado'}
+CPF: ${result.cpf || 'Não encontrado'}
+Nascimento: ${result.nasc || 'Não encontrado'}
+Nome da Mãe: ${result.mae || 'Não encontrado'}
 `;
     }
 
@@ -1071,51 +882,19 @@ Nome: ${data.nome || 'Não encontrado'}
   return resultString;
 }
 
-function formatCepResults(data: CepResult[], maxResults: number): string {
+
+function formatMotherResults(data: [string, string][]): string {
   let resultString = '';
 
-  // Verificando se data é uma matriz
-  if (Array.isArray(data)) {
-    for (let i = 0; i < Math.min(data.length, maxResults); i++) {
-      const result = data[i];
-      resultString += `
-DDD: ${result[0] || 'Não encontrado'}
-FONE: ${result[1] || 'Não encontrado'}
-CPF: ${result[2] || 'Não encontrado'}
-NOME: ${result[3] || 'Não encontrado'}
-TIPO: ${result[4] || 'Não encontrado'}
-LOGRADOURO: ${result[5] || 'Não encontrado'}
-NUMERO: ${result[6] || 'Não encontrado'}
-BAIRRO: ${result[7] || 'Não encontrado'}
-CIDADE: ${result[9] || 'Não encontrado'}
-UF: ${result[10] || 'Não encontrado'}
-
-`;
-    }
-
-    if (data.length > maxResults) {
-      resultString += `\nExibindo apenas ${maxResults} de ${data.length} resultados.`;
-    }
-  } else {
-    resultString = 'Dados não disponíveis';
-  }
-
-  return resultString;
-}
-
-function formatMotherResults(data: MotherResult[]): string {
-  let resultString = '';
-  const [nome, cpf ] = data;
-  // Iterando sobre cada elemento da matriz data
+  // Iterando sobre cada elemento do array de dados
   data.forEach(([nome, cpf]) => {
     // Adicionando os dados formatados ao resultString para cada elemento
     resultString += `
-     CPF: ${cpf || 'Não encontrado,'}
+     CPF: ${cpf || 'Não encontrado'}
      NOME: ${nome || 'Não encontrado'}
     `;
- });
+  });
 
   return resultString;
 }
-resultString;
-resultString = '';
+
