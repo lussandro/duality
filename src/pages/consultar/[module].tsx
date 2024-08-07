@@ -15,7 +15,7 @@ const modules = [
     api: '/api/consultar',
     placeholder: 'Digite o CPF',
     submodules: [
-      { name: 'SERASA', api: '/cpf' }
+      { name: 'FINDY', api: '/cpf' }
       // { name: 'CADSUS', api: '/cpf' }
     ],
     charactersToRemove: ['.', '-', ' '],
@@ -26,7 +26,7 @@ const modules = [
     api: '/api/consultar',
     placeholder: 'Digite o CPF',
     submodules: [
-      { name: 'Serasa', api: '/spc' },
+      { name: 'Findy', api: '/spc' },
     ],
     charactersToRemove: [' '],
   },
@@ -36,7 +36,7 @@ const modules = [
     api: '/api/consultar',
     placeholder: 'Digite o email',
     submodules: [
-      { name: 'Serasa', api: '/mail' },
+      { name: 'Findy', api: '/mail' },
     ],
     charactersToRemove: [' '],
   },
@@ -46,7 +46,7 @@ const modules = [
     api: '/api/consultar',
     placeholder: 'Digite a placa',
     submodules: [
-      { name: 'DETRAN', api: '/placa2' },
+      { name: 'Findy', api: '/placa2' },
     ],
     charactersToRemove: [' '],
   },
@@ -66,7 +66,7 @@ const modules = [
     api: '/api/consultar',
     placeholder: 'Digite a placa',
     submodules: [
-      { name: 'DETRAN', api: '/placa' },
+      { name: 'Findy', api: '/placa' },
     ],
     charactersToRemove: [' '],
   },
@@ -76,7 +76,7 @@ const modules = [
     api: '/api/consultar',
     placeholder: 'Digite a placa',
     submodules: [
-      { name: 'DETRAN', api: '/placadetran' },
+      { name: 'Findy', api: '/placadetran' },
     ],
     charactersToRemove: [' '],
   },
@@ -96,7 +96,7 @@ const modules = [
     api: '/api/consultar',
     placeholder: 'Digite o nome',
     submodules: [
-      { name: 'SERASA', api: '/nomeserasa' }
+      { name: 'Findy', api: '/nomeserasa' }
       
     ],
   },
@@ -106,7 +106,7 @@ const modules = [
     api: '/api/consultar',
     placeholder: 'Digite o telefone',
     submodules: [
-      { name: 'Serasa', api: '/telefone' },
+      { name: 'Findy', api: '/telefone' },
     ],
     charactersToRemove: ['+', '(', ')', '-', ' '],
   }, 
@@ -116,7 +116,7 @@ const modules = [
     api: '/api/consultar',
     placeholder: 'Digite o CPF',
     submodules: [
-      { name: 'Serasa', api: '/telefone2' },
+      { name: 'Findy', api: '/telefone2' },
     ],
     charactersToRemove: ['+', '(', ')', '-', ' '],
   }, 
@@ -126,7 +126,7 @@ const modules = [
     api: '/api/consultar',
     placeholder: 'Digite o CEP',
     submodules: [
-      { name: 'OwnData', api: '/cep' },
+      { name: 'Findy', api: '/cep' },
     ],
     charactersToRemove: ['-', ' '],
   },
@@ -136,7 +136,7 @@ const modules = [
     api: '/api/consultar',
     placeholder: 'Digite o nome da Mãe',
     submodules: [
-      { name: 'OwnData', api: '/mother' }
+      { name: 'Findy', api: '/mother' }
     ],
   },
   {
@@ -156,7 +156,7 @@ const modules = [
     api: '/api/consultar',
     placeholder: 'Digite o endereço sem https ou www:',
     submodules: [
-      { name: 'dominio', api: '/site' }
+      { name: 'Findy', api: '/site' }
       
     ],
     charactersToRemove: [''],
