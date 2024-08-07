@@ -398,7 +398,7 @@ async function QueryAPI(req: NextApiRequest, res: NextApiResponse) {
 
     const moduleUrlMap: Record<string, (input: string) => string> = {
       Ip: (input) => `${API_BASE_URL_SECUNDARY}/${input}?fields=16867865`,
-      site: (input) => `http://localhost:3008/whois/${input}`,
+      site: (input) => `http://92.112.178.71:3008/whois/${input}`,
       cpf: (input) => `${API_BASE_URL_SERASA}/cpf/${input}`,
       nomeserasa: (input) => `${API_BASE_URL_SERASA}/nome/${input}`,
       placa: (input) => `${API_BASE_URL_DUALITY}/consulta_placa?placa=${input}`,
