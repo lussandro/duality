@@ -7,8 +7,8 @@ import axios from 'axios';
 import AuthMiddleware from '@/middlewares/AuthMiddleware';
 
 const API_BASE_URL_SECUNDARY = 'http://ip-api.com/json'
-const API_BASE_URL_SERASA = `http://192.168.1.6:5008`
-const API_BASE_URL_DUALITY = `http://192.168.1.6:5000/api`
+const API_BASE_URL_SERASA = `http://92.112.176.245:5008`
+const API_BASE_URL_DUALITY = `http://92.112.176.245:5000/api`
 const API_BASE_URL_OWNDATA = `http://192.168.1.6:5000/buscar_contatos`
 const API_PLACAS = 'https://wdapi2.com.br'
 const API_PLACAS_DETRAN = 'https://flamesconsultas.store/apis'
